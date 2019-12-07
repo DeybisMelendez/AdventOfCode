@@ -1,45 +1,26 @@
 local input = {284639,748759} -- Escribir rango de numeros
-local num = input[2] - input[1]
-local passwords = {}
-local passwords2 = {}
-
-local function are2AdjacentNumberTheSame(pass)
-    for char=1, pass:len()-1 do
-        if pass:sub(char, char) == pass:sub(char+1, char+1) then
-            return true
+local answer1 = 0
+local answer2 = 0
+print("total pass: " .. input[2]-input[1])
+for pass = input[1], input[2] do
+    local text = tostring(pass)
+    local sameDigits = false
+    local neverDecrease = true
+    local isOnlyPair = false
+    for char=1, 5 do
+        if text:sub(char, char) == text:sub(char+1, char+1) then
+            sameDigits = true
+            if not (text:sub(char, char) == text:sub(char-1, char-1) or
+                    text:sub(char, char) == text:sub(char+2, char+2)) then
+                isOnlyPair = true
+            end
+        end
+        if text:sub(char+1, char+1) < text:sub(char, char) then
+            neverDecrease = false
         end
     end
-    return false
+    if sameDigits and neverDecrease then answer1 = answer1 + 1 end
+    if sameDigits and neverDecrease and isOnlyPair then answer2 = answer2 + 1 end
 end
-
-local function digitsNeverDecrease(pass)
-    for char=1, pass:len()-1 do
-        if pass:sub(char+1, char+1) < pass:sub(char, char) then
-            return false
-        end
-    end
-    return true
-end
-
-local function areNotPartOfALargerGroupOfMatchingDigits(pass)
-    for char=1, pass:len()-3,2 do
-        if not (pass:sub(char, char+1) >= pass:sub(char+2, char+3)) then
-            return false
-        end
-    end
-    return true
-end
-for value=1, num do
-    local pass = value + input[1]
-    if are2AdjacentNumberTheSame(tostring(pass)) and digitsNeverDecrease(tostring(pass)) then
-        table.insert(passwords, pass)
-        if areNotPartOfALargerGroupOfMatchingDigits(tostring(pass)) then
-            table.insert(passwords2, pass)
-        end
-    end
-end
-print("the answer 1 is " .. #passwords)
-print("the answer 2 is " .. #passwords2)
-for _, pass in ipairs(passwords2) do
-    print(pass)
-end
+print("answer 1: " .. answer1)
+print("answer 2: " .. answer2)
