@@ -1,61 +1,45 @@
-local input = {284639,748759}
+local input = {284639,748759} -- Escribir rango de numeros
 local num = input[2] - input[1]
 local passwords = {}
 local passwords2 = {}
 
-local function isCorrect(pass)
-    local result = false
-    -- Revisar numeros adyacentes
-    local text = tostring(pass)
-    for char=1, text:len()-1 do
-        if tonumber(text:sub(char+1, char+1)) == tonumber(text:sub(char, char)) then
-            result = true
-            break
+local function are2AdjacentNumberTheSame(pass)
+    for char=1, pass:len()-1 do
+        if pass:sub(char, char) == pass:sub(char+1, char+1) then
+            return true
         end
     end
-    if not result then return result end
-    --result = false
-    for char=1, text:len()-1 do
-        if tonumber(text:sub(char+1, char+1)) < tonumber(text:sub(char, char)) then
-            result = false
-            break
-        end
-    end
-    return result
+    return false
 end
-local function isCorrect2(pass)
-    local result = isCorrect(pass)
-    local text = tostring(pass)
-    -- for char=1, text:len()-4, 2 do
-    --     if text:sub(char) == text:sub(char+1) and text:sub(char+2) == text:sub(char+3) then
-    --         if tonumber(text:sub(char+2, char+3)) == tonumber(text:sub(char, char+1)) then
-    --             result = false
-    --             break
-    --         end
-    --     end
-    -- end
-    -- if not result then return result end
-    for char=1, text:len()-4, 2 do
-        if text:sub(char) == text:sub(char+1) and text:sub(char+2) == text:sub(char+3) then
-            if tonumber(text:sub(char+2, char+3)) < tonumber(text:sub(char, char+1)) then
-                result = false
-                break
-            end
+
+local function digitsNeverDecrease(pass)
+    for char=1, pass:len()-1 do
+        if pass:sub(char+1, char+1) < pass:sub(char, char) then
+            return false
         end
     end
-    return result
+    return true
+end
+
+local function areNotPartOfALargerGroupOfMatchingDigits(pass)
+    for char=1, pass:len()-3,2 do
+        if not (pass:sub(char, char+1) >= pass:sub(char+2, char+3)) then
+            return false
+        end
+    end
+    return true
 end
 for value=1, num do
     local pass = value + input[1]
-    if isCorrect(pass) then
+    if are2AdjacentNumberTheSame(tostring(pass)) and digitsNeverDecrease(tostring(pass)) then
         table.insert(passwords, pass)
-    end
-end
-for value=1, num do
-    local pass = value + input[1]
-    if isCorrect2(pass) then
-        table.insert(passwords2, pass)
+        if areNotPartOfALargerGroupOfMatchingDigits(tostring(pass)) then
+            table.insert(passwords2, pass)
+        end
     end
 end
 print("the answer 1 is " .. #passwords)
 print("the answer 2 is " .. #passwords2)
+for _, pass in ipairs(passwords2) do
+    print(pass)
+end

@@ -1,5 +1,5 @@
 do
-local file = io.open("input.txt", "r")
+local file = io.open("input.txt", "r") -- Se requiere un archivo input.txt para ejecutar
 local input = file:read("*a")
 file:close()
 
@@ -20,10 +20,6 @@ end
 local function addVec(v1, v2)
     return {x = v1.x + v2.x, y = v1.y + v2.y}
 end
-
--- local function equalVec(v1, v2)
---     return v1.x == v2.x and v1.y == v2.y
--- end
 
 local function distanceVec(v)
     return (math.abs(0 - v.x) + math.abs(0 - v.y))
