@@ -25,8 +25,13 @@ local function intCode(i)--, noun, verb)
         opCode = tonumber(code:sub(code:len()-1, code:len()))
         local addPointer = 4
         if opCode > 2 then addPointer = 2 end
-        for char=0, parameters:len() do
-            print("code: " .. code .. ", opcode: " .. opCode .. ", parameterMode: " .. parameterMode)
+        local parameters = code
+        for _=1, 5-code:len() do
+            parameters = "0" .. parameters
+        end
+        for char=1, parameters:len() do
+            local parameterMode = parameters:sub(parameters:len()-char, parameters:len()-char)
+            print("Code: " .. code .. ", parameters: " .. parameters .. ", opcode: " .. opCode .. ", mode: " .. parameterMode)
             if parameterMode == 0 then -- parametro de posicion
                 if opCode == 1 then
                     input[input[pointer+3]+1] = input[input[pointer+1]+1] + input[input[pointer+2]+1]
@@ -47,7 +52,7 @@ local function intCode(i)--, noun, verb)
                 elseif opCode == 3 then
                     input[input[pointer+1]+1] = inputValue
                 elseif opCode == 4 then
-                    inputValue = input[pointer+1]+1
+                    inputValue = input[input[pointer+1]+1]
                 end
             end
         end
