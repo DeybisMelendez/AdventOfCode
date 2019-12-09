@@ -85,6 +85,6 @@ for i, value in ipairs(cablesPaths[2]) do
         end
     end
 end
-print("Answer 1 is " .. distanceMin)
-print("Answer 2 is " .. stepsMin)
+print("Answer 1 is: " .. distanceMin)
+print("Answer 2 is: " .. stepsMin)
 end
