@@ -22,5 +22,5 @@ for pass = input[1], input[2] do
     if sameDigits and neverDecrease then answer1 = answer1 + 1 end
     if sameDigits and neverDecrease and isOnlyPair then answer2 = answer2 + 1 end
 end
-print("answer 1: " .. answer1)
-print("answer 2: " .. answer2)
+print("answer 1 is: " .. answer1)
+print("answer 2 is: " .. answer2)
