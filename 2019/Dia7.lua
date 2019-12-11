@@ -36,63 +36,139 @@ local function copyTable(t)
     return n
 end
 
-local function intCode(table, v)--iv)
-    local input = copyTable(table)
-    local pointer = v.p --Tablas en lua comienzan con 1, no 0
-    local opCode
-    local nextInput = v.n
-    while true do
-        local code = tostring(input[pointer])
-        for _=1, 5-(code:len()) do
-            code = "0" .. code
+-- local function intCode(t, i)--iv)
+--     local input = copyTable(t)
+--     local pointer = 1 --Tablas en lua comienzan con 1, no 0
+--     local opCode
+--     local nextInput = 1
+--     while true do
+--         local code = tostring(input[pointer])
+--         for _=1, 5-(code:len()) do
+--             code = "0" .. code
+--         end
+--         opCode = tonumber(code:sub(code:len()-1, code:len()))
+--         if opCode == 99 then return nil end --input[input[pointer+1]+1] end
+--         local param1, param2--, param3 parametro 3 tecnicamente no requiere modo inmediato
+--         if tonumber(code:sub(3,3)) == 1 then param1 = pointer+1 else param1 = input[pointer+1]+1 end
+--         if opCode ~= 4 and opCode ~= 3 then
+--             if tonumber(code:sub(2,2)) == 1 then param2 = pointer+2 else param2 = input[pointer+2]+1 end
+--         end
+--         if opCode == 1 then
+--             input[input[pointer+3]+1] = input[param1] + input[param2]
+--             pointer = pointer + 4
+--         elseif opCode == 2 then
+--             input[input[pointer+3]+1] = input[param1] * input[param2]
+--             pointer = pointer + 4
+--         -- nuevas instrucciones PARTE 1
+--         elseif opCode == 3 then
+--             input[input[pointer+1]+1] = i[nextInput] or i[2]--inputValue
+--             nextInput = nextInput+1
+--             pointer = pointer + 2
+--         elseif opCode == 4 then
+--             return input[input[pointer+1]+1], {pointer, nextInput}, input
+--             --pointer = pointer + 2
+--         -- Nuevas instrucciones PARTE 2
+--         elseif opCode == 5 then
+--             if not (input[param1] == 0) then pointer = input[param2]+1 else pointer = pointer + 3 end
+--         elseif opCode == 6 then
+--             if input[param1] == 0 then pointer = input[param2]+1 else pointer = pointer + 3 end
+--         elseif opCode == 7 then
+--             if input[param1] < input[param2] then input[input[pointer+3]+1] = 1 else input[input[pointer+3]+1] = 0 end
+--             pointer = pointer + 4
+--         elseif opCode == 8 then
+--             if input[param1] == input[param2] then input[input[pointer+3]+1] = 1 else input[input[pointer+3]+1] = 0 end
+--             pointer = pointer + 4
+--         else
+--             error("opCode desconocido: " .. opCode)
+--         end
+--     end
+-- end
+
+local function newAmplifier(i, i1)
+    local t = {}
+    t.input = copyTable(i)
+    t.nextInput = 1
+    t.i = {i1}
+    t.pointer = 1
+    --t.i2 = i2
+    function t:intCode(inputValue)
+        self.i[2] = inputValue
+        local input = copyTable(self.input)
+        local pointer = self.pointer --Tablas en lua comienzan con 1, no 0
+        local opCode
+        local nextInput = self.nextInput--1
+        while true do
+            local code = tostring(input[pointer])
+            for _=1, 5-(code:len()) do
+                code = "0" .. code
+            end
+            opCode = tonumber(code:sub(code:len()-1, code:len()))
+            if opCode == 99 then return end --input[input[pointer+1]+1] end
+            local param1, param2--, param3 parametro 3 tecnicamente no requiere modo inmediato
+            if tonumber(code:sub(3,3)) == 1 then param1 = pointer+1 else param1 = input[pointer+1]+1 end
+            if opCode ~= 4 and opCode ~= 3 then
+                if tonumber(code:sub(2,2)) == 1 then param2 = pointer+2 else param2 = input[pointer+2]+1 end
+            end
+            if opCode == 1 then
+                input[input[pointer+3]+1] = input[param1] + input[param2]
+                pointer = pointer + 4
+            elseif opCode == 2 then
+                input[input[pointer+3]+1] = input[param1] * input[param2]
+                pointer = pointer + 4
+            -- nuevas instrucciones PARTE 1
+            elseif opCode == 3 then
+                input[input[pointer+1]+1] = self.i[nextInput] or self.i[2]--inputValue
+                print(self.i[nextInput])
+                nextInput = nextInput+1
+                pointer = pointer + 2
+            elseif opCode == 4 then
+                --self.input = input
+                self.nextInput = nextInput
+                --self.pointer = pointer
+                return input[input[pointer+1]+1], pointer
+                --pointer = pointer + 2
+            -- Nuevas instrucciones PARTE 2
+            elseif opCode == 5 then
+                if not (input[param1] == 0) then pointer = input[param2]+1 else pointer = pointer + 3 end
+            elseif opCode == 6 then
+                if input[param1] == 0 then pointer = input[param2]+1 else pointer = pointer + 3 end
+            elseif opCode == 7 then
+                if input[param1] < input[param2] then input[input[pointer+3]+1] = 1 else input[input[pointer+3]+1] = 0 end
+                pointer = pointer + 4
+            elseif opCode == 8 then
+                if input[param1] == input[param2] then input[input[pointer+3]+1] = 1 else input[input[pointer+3]+1] = 0 end
+                pointer = pointer + 4
+            else
+                error("opCode desconocido: " .. opCode)
+            end
         end
-        opCode = tonumber(code:sub(code:len()-1, code:len()))
-        if opCode == 99 then return nil end --input[input[pointer+1]+1] end
-        local param1, param2--, param3 parametro 3 tecnicamente no requiere modo inmediato
-        if tonumber(code:sub(3,3)) == 1 then param1 = pointer+1 else param1 = input[pointer+1]+1 end
-        if opCode ~= 4 and opCode ~= 3 then
-            if tonumber(code:sub(2,2)) == 1 then param2 = pointer+2 else param2 = input[pointer+2]+1 end
-        end
-        if opCode == 1 then
-            input[input[pointer+3]+1] = input[param1] + input[param2]
-            pointer = pointer + 4
-        elseif opCode == 2 then
-            input[input[pointer+3]+1] = input[param1] * input[param2]
-            pointer = pointer + 4
-        -- nuevas instrucciones PARTE 1
-        elseif opCode == 3 then
-            input[input[pointer+1]+1] = i[nextInput] or i[2]--inputValue
-            nextInput = nextInput+1
-            input[nextInput] = nextInput
-            pointer = pointer + 2
-        elseif opCode == 4 then
-            return input[input[pointer+1]+1], {p=pointer, n = nextInput}
-            --pointer = pointer + 2
-        -- Nuevas instrucciones PARTE 2
-        elseif opCode == 5 then
-            if not (input[param1] == 0) then pointer = input[param2]+1 else pointer = pointer + 3 end
-        elseif opCode == 6 then
-            if input[param1] == 0 then pointer = input[param2]+1 else pointer = pointer + 3 end
-        elseif opCode == 7 then
-            if input[param1] < input[param2] then input[input[pointer+3]+1] = 1 else input[input[pointer+3]+1] = 0 end
-            pointer = pointer + 4
-        elseif opCode == 8 then
-            if input[param1] == input[param2] then input[input[pointer+3]+1] = 1 else input[input[pointer+3]+1] = 0 end
-            pointer = pointer + 4
-        else
-            error("opCode desconocido: " .. opCode)
-        end
-        input["pointer"] = pointer
     end
+    return t
 end
 
+-- local function getResult1()
+--     local sequences = getSequences(0,4)
+--     local result = 0
+--     for _, v in ipairs(sequences) do
+--         local inputValue = 0
+--         for i=1, #v do
+--             inputValue = intCode(inputCode, {v[i], inputValue})
+--         end
+--         if result < inputValue then
+--             result = inputValue
+--         end
+--     end
+--     return result
+-- end
 local function getResult1()
     local sequences = getSequences(0,4)
     local result = 0
     for _, v in ipairs(sequences) do
+        local amps = {}
         local inputValue = 0
-        for inputInstruction=1, #v do
-            inputValue = intCode(inputCode, {v[inputInstruction], inputValue})
+        for i=1, #v do
+            table.insert(amps, newAmplifier(inputCode, v[i]))
+            inputValue = amps[i]:intCode(inputValue)
         end
         if result < inputValue then
             result = inputValue
@@ -101,32 +177,38 @@ local function getResult1()
     return result
 end
 
+
 local function getResult2()
     local sequences = {{9,8,7,6,5}}--getSequences(5,9)
-    --print("sequences ", #sequences)
     local result = 0
     for _, v in ipairs(sequences) do
-        --local amps = {}
-        local inputValue = 0
-        local unfinish = true
+        print("loop")
         local amps = {}
-        for _=1, 5 do
-            table.insert(amps, {p=1,n=1})
+        for i=1, #v do
+            table.insert(amps, newAmplifier(inputCode, v[i]))
+            --inputValue = amps[i]:intCode(inputValue)
         end
-        while unfinish do
+        --local index = 1
+        local inputValue = 0
+        while true do
             --print(inputValue)
-            for i=1, #v do
-                --local t = amps[inputInstruction]
-                inputValue, amps[i] = intCode(inputCode, {v[i], inputValue}, amps[i])
-                if not inputValue then unfinish = false end
-            end
+            inputValue = amps[1]:intCode(inputValue)
+            print(inputValue)
+            inputValue = amps[2]:intCode(inputValue)
+            print(inputValue)
+            inputValue = amps[3]:intCode(inputValue)
+            print(inputValue)
+            inputValue = amps[4]:intCode(inputValue)
+            print(inputValue)
+            inputValue = amps[5]:intCode(inputValue)
+            print(inputValue)
+            if not inputValue then return result end
             if result < inputValue then
                 result = inputValue
             end
-            --print(inputValue)
         end
     end
-    return result
+    --return result
 end
 
 --print("the answer 1 is: " .. getResult1())
