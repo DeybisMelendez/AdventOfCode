@@ -53,13 +53,15 @@ local function newIntCode(i)
                 end
             end
             --parametro 3
-            if tonumber(code:sub(1,1)) == 2 then
-                param3 = self.input[self.pointer+3]+1 + self.baseRelative
-            end
-            if tonumber(code:sub(1,1)) == 1 then
-                param3 = self.pointer+3
-            elseif tonumber(code:sub(1,1)) == 0 then
-                param3 = self.input[self.pointer+3]+1
+            if opCode ~= 4 and opCode ~= 5 and opCode ~=6 and opCode ~= 9 then
+                if tonumber(code:sub(1,1)) == 2 then
+                    param3 = self.input[self.pointer+3]+1 + self.baseRelative
+                end
+                if tonumber(code:sub(1,1)) == 1 then
+                    param3 = self.pointer+3
+                elseif tonumber(code:sub(1,1)) == 0 then
+                    param3 = self.input[self.pointer+3]+1
+                end
             end
             -- OP CODES
             --local continue = false
@@ -119,7 +121,6 @@ local function newIntCode(i)
 end
 
 local intCode = newIntCode(inputCode)
--- for _, v in ipairs(intCode.input) do
---     print(v)
--- end
+local intCode2 = newIntCode(inputCode)
 print("answer 1 is", intCode:intCode({1}))
+print("answer 2 is", intCode2:intCode({2}))
