@@ -63,6 +63,7 @@ local function getResult2(n, m)
         local inputValue = 0
         for i=1, #v do
             table.insert(amps, IntCode:new(copyTable(inputCode)))
+			inputValue = amps[i]:run({v[i], inputValue})
         end
         local done = false
         local output
@@ -70,7 +71,7 @@ local function getResult2(n, m)
             for i=1, #v do
                 if inputValue == nil then break end
                 output = inputValue
-                inputValue = amps[i]:run({v[i], inputValue})
+                inputValue = amps[i]:run({inputValue})
             end
             if inputValue == nil then done = true end
         end

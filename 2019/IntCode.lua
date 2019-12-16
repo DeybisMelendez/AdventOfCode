@@ -21,7 +21,7 @@ end
 
 function IntCode:input(mode1, inputValue) -- OpCode 3
 	if mode1 == 1 then mode1 = 0 end
-	self.memory[self:getParam(mode1, 1)] = inputValue[self.nextInput]-- or inputValue[#inputValue] --ACTIVAR POR EL DIA 7
+	self.memory[self:getParam(mode1, 1)] = inputValue[self.nextInput]
 	self.pointer = self.pointer + 2
 	self.nextInput = self.nextInput + 1
 end
@@ -30,6 +30,7 @@ function IntCode:outputs(mode1) -- OpCode 4
 	if mode1 == 1 then mode1 = 0 end
 	self.output = self.memory[self:getParam(mode1, 1)]
 	self.pointer = self.pointer + 2
+	self.nextInput = 1
 end
 
 function IntCode:jumpIfTrue(mode1, mode2) -- OpCode 5
