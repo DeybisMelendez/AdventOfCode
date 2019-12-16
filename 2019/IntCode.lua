@@ -1,4 +1,4 @@
-local IntCode = {memory = {}, pointer = 1, output = nil}
+local IntCode = {memory = {}, pointer = 1, output = nil, nextInput=1}
 function IntCode:new(memory)
 	local t = {}
 	self.__index = self
@@ -21,12 +21,13 @@ end
 
 function IntCode:input(mode1, inputValue) -- OpCode 3
 	if mode1 == 1 then mode1 = 0 end
-	self.memory[self:getParam(mode1, 1)] = inputValue
+	self.memory[self:getParam(mode1, 1)] = inputValue[self.nextInput]-- or inputValue[#inputValue] --ACTIVAR POR EL DIA 7
 	self.pointer = self.pointer + 2
+	self.nextInput = self.nextInput + 1
 end
 
 function IntCode:outputs(mode1) -- OpCode 4
-	--if mode1 == 1 then mode1 = 0 end
+	if mode1 == 1 then mode1 = 0 end
 	self.output = self.memory[self:getParam(mode1, 1)]
 	self.pointer = self.pointer + 2
 end
@@ -105,7 +106,7 @@ function IntCode:run(inputValue)
 		if opCode == 1 then self:add(mode1, mode2, mode3)
 		elseif opCode == 2 then self:multiply(mode1, mode2, mode3)
 		elseif opCode == 3 then self:input(mode1, inputValue)
-		elseif opCode == 4 then self:outputs(mode1)
+		elseif opCode == 4 then self:outputs(mode1) return self.output -- RETURNS RESULT
 		elseif opCode == 5 then self:jumpIfTrue(mode1, mode2)
 		elseif opCode == 6 then self:jumpIfFalse(mode1, mode2)
 		elseif opCode == 7 then self:lessThan(mode1, mode2, mode3)
@@ -114,6 +115,6 @@ function IntCode:run(inputValue)
 		else print(opCode) error("no existe opCode")
 		end
 	end
-	return self.output
+	--return self.output
 end
 return IntCode
