@@ -14,7 +14,8 @@ end
 
 local IntCode = require("IntCode")
 local computer = IntCode:new(copyTable(inputCode))
+computer:run({1})
 local computer2 = IntCode:new(copyTable(inputCode))
-
-print("the answer 1 is: " .. computer:run(1))
-print("the answer 2 is: " .. computer2:run(5))
+computer2:run({5})
+print("the answer 1 is: " .. computer.output)
+print("the answer 2 is: " .. computer2.output)
