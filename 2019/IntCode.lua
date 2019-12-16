@@ -1,4 +1,4 @@
-local IntCode = {memory = {}, pointer = 1, output = nil, nextInput=1}
+local IntCode = {memory = {}, pointer = 1, output = nil, nextInput=1, baseRelative = 0}
 function IntCode:new(memory)
 	local t = {}
 	self.__index = self
@@ -69,11 +69,18 @@ function IntCode:equals(mode1, mode2, mode3) --OpCode 8
 	self.pointer = self.pointer + 4
 end
 
+function IntCode:adjustsBaseRelative(mode1) -- OpCode 9
+	self.baseRelative = self.baseRelative + self.memory[self:getParam(mode1, 1)]
+	self.pointer = self.pointer + 2
+end
+
 function IntCode:getParam(mode, parameter)
 	if mode == 0 then
 		return self:positionParam(parameter)
 	elseif mode == 1 then
 		return self:inmediateParam(parameter)
+	elseif mode == 2 then
+		return self:relativeParam(parameter)
 	else
 		error("modo de parametro desconocido")
 	end
@@ -86,6 +93,10 @@ end
 function IntCode:positionParam(p) -- integer
 	--p = p or error("Parametro no existe en la memoria")
 	return self.memory[self.pointer + p] + 1
+end
+
+function IntCode:relativeParam(p)
+	return self.memory[self.pointer + p] + self.baseRelative + 1
 end
 
 function IntCode:decodePointerMemory()
@@ -112,6 +123,7 @@ function IntCode:run(inputValue)
 		elseif opCode == 6 then self:jumpIfFalse(mode1, mode2)
 		elseif opCode == 7 then self:lessThan(mode1, mode2, mode3)
 		elseif opCode == 8 then self:equals(mode1, mode2, mode3)
+		elseif opCode == 9 then self:adjustsBaseRelative(mode1)
 		elseif opCode == 99 then done = false break
 		else print(opCode) error("no existe opCode")
 		end
