@@ -1,7 +1,5 @@
 local inputCode = {
 3,8,1001,8,10,8,105,1,0,0,21,38,63,72,81,106,187,268,349,430,99999,3,9,101,5,9,9,1002,9,3,9,101,3,9,9,4,9,99,3,9,102,3,9,9,101,4,9,9,1002,9,2,9,1001,9,2,9,1002,9,4,9,4,9,99,3,9,1001,9,3,9,4,9,99,3,9,102,5,9,9,4,9,99,3,9,102,4,9,9,1001,9,2,9,1002,9,5,9,1001,9,2,9,102,3,9,9,4,9,99,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,99,3,9,1001,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,1,9,4,9,99,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,99,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,99
---3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0
---3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5 --segunda parte
 }
 local function getSequences(n,m)
     local sequences = {}
@@ -15,7 +13,6 @@ local function getSequences(n,m)
                                 for e = n, m do
                                     if not(a==e) and not(b==e) and not(c==e) and not(d==e) then
                                         table.insert(sequences, {a,b,c,d,e})
-                                        --print(tostring(a) .. tostring(b) .. tostring(c) .. tostring(d) .. tostring(e))
                                     end
                                 end
                             end
@@ -28,12 +25,19 @@ local function getSequences(n,m)
     return sequences
 end
 
-local function copyTable(t)
-    local n = {}
-    for i, v in pairs(t) do
-        n[i] = v
+function deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value)
+        end
+        setmetatable(copy, deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
     end
-    return n
+    return copy
 end
 
 local IntCode = require "IntCode"
@@ -44,8 +48,11 @@ local function getResult1(n, m)
     for _, v in ipairs(sequences) do
         local inputValue = 0
         for i=1, #v do
-            local amp = IntCode:new(copyTable(inputCode))
-            inputValue = amp:run({v[i], inputValue})
+            local amp = deepcopy(IntCode)
+			amp:setMemory(deepcopy(inputCode))
+			amp:addInputValue(v[i], inputValue)
+			--amp:run()
+            inputValue = amp:run(nil, true)--amp:getOutput()
         end
         if result < inputValue then
             result = inputValue
@@ -54,7 +61,6 @@ local function getResult1(n, m)
     return result
 end
 
-
 local function getResult2(n, m)
     local sequences = getSequences(n,m)--{{9,8,7,6,5}}--
     local result = 0
@@ -62,8 +68,11 @@ local function getResult2(n, m)
         local amps = {}
         local inputValue = 0
         for i=1, #v do
-            table.insert(amps, IntCode:new(copyTable(inputCode)))
-			inputValue = amps[i]:run({v[i], inputValue})
+            table.insert(amps, deepcopy(IntCode))
+			amps[i]:setMemory(deepcopy(inputCode))
+			--amps[i]:addInputValue(v[i], inputValue)
+			--amps[i]:run()
+			--inputValue = amps[i]:getOutput()
         end
         local done = false
         local output
@@ -71,7 +80,9 @@ local function getResult2(n, m)
             for i=1, #v do
                 if inputValue == nil then break end
                 output = inputValue
-                inputValue = amps[i]:run({inputValue})
+				amps[i].inputs[1] = v[i]
+				amps[i].inputs[2] = inputValue
+				inputValue = amps[i]:run(nil, true)
             end
             if inputValue == nil then done = true end
         end

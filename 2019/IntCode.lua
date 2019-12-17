@@ -1,10 +1,21 @@
-local IntCode = {memory = {}, pointer = 1, output = nil, nextInput=1, baseRelative = 0}
-function IntCode:new(memory)
-	local t = {}
-	self.__index = self
-	setmetatable(t, self)
-	t.memory = memory
-	return t
+local IntCode = {memory = {}, pointer = 1, output = {}, inputs = {}, nextInput=1, baseRelative = 0}
+function IntCode:setMemory(memory)
+	self.memory = memory
+end
+
+function IntCode:addInputValue(...)
+	local t = {...}
+	for _, v in ipairs(t) do
+		table.insert(self.inputs, v)
+	end
+end
+function IntCode:getOutput()
+	--print(self.output[#self.output])
+	return self.output[#self.output] or nil
+end
+function IntCode:getInputValue()
+	self.nextInput = self.nextInput + 1
+	return self.inputs[self.nextInput-1] or self.inputs[#self.inputs]
 end
 
 function IntCode:add(mode1, mode2, mode3) -- OpCode 1
@@ -19,18 +30,19 @@ function IntCode:multiply(mode1, mode2, mode3) -- OpCode 2
 	self.pointer = self.pointer + 4
 end
 
-function IntCode:input(mode1, inputValue) -- OpCode 3
+function IntCode:input(mode1)--, inputValue) -- OpCode 3
 	if mode1 == 1 then mode1 = 0 end
-	self.memory[self:getParam(mode1, 1)] = inputValue[self.nextInput]
+	self.memory[self:getParam(mode1, 1)] = self:getInputValue()--inputValue--[self.nextInput]
 	self.pointer = self.pointer + 2
-	self.nextInput = self.nextInput + 1
+	--self.nextInput = self.nextInput + 1
 end
 
 function IntCode:outputs(mode1) -- OpCode 4
 	if mode1 == 1 then mode1 = 0 end
-	self.output = self.memory[self:getParam(mode1, 1)]
+	table.insert(self.output, self.memory[self:getParam(mode1, 1)])
+	--self.output = self.memory[self:getParam(mode1, 1)]
 	self.pointer = self.pointer + 2
-	self.nextInput = 1
+	--self.nextInput = 1
 end
 
 function IntCode:jumpIfTrue(mode1, mode2) -- OpCode 5
@@ -111,13 +123,14 @@ function IntCode:decodePointerMemory()
 	return tonumber(opCode), tonumber(mode1), tonumber(mode2), tonumber(mode3)
 end
 
-function IntCode:run(inputValue)
+function IntCode:run(inputValue, out)
+	if not(inputValue == nil) then self:addInputValue(inputValue) end
 	while true do
 		local opCode, mode1, mode2, mode3 = self:decodePointerMemory()
 		if opCode == 1 then self:add(mode1, mode2, mode3)
 		elseif opCode == 2 then self:multiply(mode1, mode2, mode3)
-		elseif opCode == 3 then self:input(mode1, inputValue)
-		elseif opCode == 4 then self:outputs(mode1)  -- Devolvemos resultado
+		elseif opCode == 3 then self:input(mode1)--, inputValue)
+		elseif opCode == 4 then self:outputs(mode1) if out then return self:getOutput() end-- Devolvemos resultado
 		elseif opCode == 5 then self:jumpIfTrue(mode1, mode2)
 		elseif opCode == 6 then self:jumpIfFalse(mode1, mode2)
 		elseif opCode == 7 then self:lessThan(mode1, mode2, mode3)
