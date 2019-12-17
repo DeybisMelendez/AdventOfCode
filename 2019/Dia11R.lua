@@ -19,12 +19,30 @@ local function getNextColor(table, pos)
 	if #table > 0 then
 		for _, value in pairs(table) do
 			if value.x == pos.x and value.y == pos.y then
-				print("devuelve", value.color)
+				--print("devuelve", value.color)
 				return value.color
 			end
 		end
 	end
 	return 0
+end
+
+local function setPaint(panels, pos, color)
+	local painted = false
+	if #panels > 0 then
+		for i, value in pairs(panels) do
+			if value.x == pos.x and value.y == pos.y then
+				painted = true
+				if not(value.color == color) then
+					panels[i].color = color
+				end
+			end
+		end
+	end
+	if not painted and not(color == 0) then
+		table.insert(panels, {x = pos.x, y = pos.y, color = color})
+	end
+	return panels
 end
 
 local IntCode = require"IntCode"
@@ -41,10 +59,11 @@ local function answer1()
 	
 	while true do
 		nextColor = getNextColor(panels, pos, nextColor)
-		--robot:addInputValue(nextColor)
-		local newColor = robot:run(nextColor, true)
+		robot:addInputValue(nextColor)
+		local newColor = robot:run(nil, true)
 		if newColor == nil then break end
-		table.insert(panels, {x = pos.x, y = pos.y, color = nextColor})
+		panels = setPaint(panels, pos, newColor)
+		--table.insert(panels, {x = pos.x, y = pos.y, color = newColor})
 		--robot:run(nil, true)
 		local nextDir = robot:run(nil, true)
 		--robot:run()
@@ -57,10 +76,44 @@ local function answer1()
 			orientation = 1
 		end
 		pos.x, pos.y = pos.x + direction[orientation].x, pos.y + direction[orientation].y
-		print(nextColor, newColor, nextDir, orientation)
+		print(nextColor, newColor, nextDir, pos.x, pos.y, orientation, #panels)
 		--print(#panels)
 	end
 	return #panels
 end
 
+local function answer2()
+	local robot = deepcopy(IntCode)
+	robot:setMemory(deepcopy(inputCode))
+	local pos = {x = 0, y = 0}
+	local panels = {}
+	local nextColor = 0
+	local newColor
+	local direction = {{x=0, y=-1}, {x=1,y=0}, {x=0,y=1}, {x=-1,y=0}}
+	local orientation = 1
+	
+	while true do
+		nextColor = getNextColor(panels, pos, nextColor)
+		robot:addInputValue(nextColor)
+		local newColor = robot:run(nil, true)
+		if newColor == nil then break end
+		panels = setPaint(panels, pos, newColor)
+		--table.insert(panels, {x = pos.x, y = pos.y, color = newColor})
+		--robot:run(nil, true)
+		local nextDir = robot:run(nil, true)
+		--robot:run()
+		if nextDir == nil then break end
+		if nextDir == 0 then nextDir = -1 end
+		orientation = orientation + nextDir
+		if orientation < 1 then
+			orientation = #direction
+		elseif orientation > #direction then
+			orientation = 1
+		end
+		pos.x, pos.y = pos.x + direction[orientation].x, pos.y + direction[orientation].y
+		print(nextColor, newColor, nextDir, pos.x, pos.y, orientation, #panels)
+		--print(#panels)
+	end
+	return #panels
+end
 print("the answer 1 is:", answer1())
