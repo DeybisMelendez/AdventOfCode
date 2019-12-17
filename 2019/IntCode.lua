@@ -109,6 +109,7 @@ function IntCode:getParam(mode, parameter)
 end
 
 function IntCode:adjustParameter(p)
+	if p < 0 then error("parametro es menor que cero", p) end
 	if self.memory[p] == nil then
 		self.memory[p] = 0
 	end

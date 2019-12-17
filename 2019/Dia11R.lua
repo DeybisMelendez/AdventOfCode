@@ -17,8 +17,9 @@ function deepcopy(orig)
 end
 local function getNextColor(table, pos)
 	if #table > 0 then
-		for _, value in ipairs(table) do
+		for _, value in pairs(table) do
 			if value.x == pos.x and value.y == pos.y then
+				print("devuelve", value.color)
 				return value.color
 			end
 		end
@@ -33,17 +34,17 @@ local function answer1()
 	robot:setMemory(deepcopy(inputCode))
 	local pos = {x = 0, y = 0}
 	local panels = {}
-	local nextColor
+	local nextColor = 0
 	local newColor
-	local direction = {{x=0, y=-1}, {x=1,y=0}, {x=0,y=-1}, {x=-1,y=0}}
+	local direction = {{x=0, y=-1}, {x=1,y=0}, {x=0,y=1}, {x=-1,y=0}}
 	local orientation = 1
 	
 	while true do
-		nextColor = getNextColor(panels, pos)
+		nextColor = getNextColor(panels, pos, nextColor)
 		--robot:addInputValue(nextColor)
 		local newColor = robot:run(nextColor, true)
 		if newColor == nil then break end
-		table.insert(panels, {x = pos.x, y = pos.y, color = newColor})
+		table.insert(panels, {x = pos.x, y = pos.y, color = nextColor})
 		--robot:run(nil, true)
 		local nextDir = robot:run(nil, true)
 		--robot:run()
@@ -56,7 +57,7 @@ local function answer1()
 			orientation = 1
 		end
 		pos.x, pos.y = pos.x + direction[orientation].x, pos.y + direction[orientation].y
-		print(nextColor, newColor, nextDir)
+		print(nextColor, newColor, nextDir, orientation)
 		--print(#panels)
 	end
 	return #panels
