@@ -20,18 +20,21 @@ end
 
 function IntCode:add(mode1, mode2, mode3) -- OpCode 1
 	if mode3 == 1 then mode3 = 0 end
+	--print("add", self:getParam(mode1, 1), self:getParam(mode2, 2))
 	self.memory[self:getParam(mode3, 3)] = self.memory[self:getParam(mode1, 1)] + self.memory[self:getParam(mode2, 2)]
 	self.pointer = self.pointer + 4
 end
 
 function IntCode:multiply(mode1, mode2, mode3) -- OpCode 2
 	if mode3 == 1 then mode3 = 0 end
+	--print("multiply", self:getParam(mode1, 1), self:getParam(mode2, 2))
 	self.memory[self:getParam(mode3, 3)] = self.memory[self:getParam(mode1, 1)] * self.memory[self:getParam(mode2, 2)]
 	self.pointer = self.pointer + 4
 end
 
 function IntCode:input(mode1)--, inputValue) -- OpCode 3
 	if mode1 == 1 then mode1 = 0 end
+	--print("input", self:getParam(mode1, 1))
 	self.memory[self:getParam(mode1, 1)] = self:getInputValue()--inputValue--[self.nextInput]
 	self.pointer = self.pointer + 2
 	--self.nextInput = self.nextInput + 1
@@ -39,6 +42,7 @@ end
 
 function IntCode:outputs(mode1) -- OpCode 4
 	--if not(mode1 == 0) then mode1 = 0 end --desactivando esto funciona el dia 11R
+	--print("outputs", self:getParam(mode1, 1))
 	table.insert(self.output, self.memory[self:getParam(mode1, 1)])
 	--self.output = self.memory[self:getParam(mode1, 1)]
 	self.pointer = self.pointer + 2
@@ -46,6 +50,7 @@ function IntCode:outputs(mode1) -- OpCode 4
 end
 
 function IntCode:jumpIfTrue(mode1, mode2) -- OpCode 5
+	--print("jumpiftrue", self:getParam(mode1, 1), self:getParam(mode2, 2))
 	if not(self.memory[self:getParam(mode1, 1)] == 0) then
 		self.pointer = self.memory[self:getParam(mode2, 2)] + 1
 	else
@@ -54,6 +59,7 @@ function IntCode:jumpIfTrue(mode1, mode2) -- OpCode 5
 end
 
 function IntCode:jumpIfFalse(mode1, mode2) --OpCode 6
+	--print("jumpiffalse", self:getParam(mode1, 1), self:getParam(mode2, 2))
 	if self.memory[self:getParam(mode1, 1)] == 0 then
 		self.pointer = self.memory[self:getParam(mode2, 2)] + 1
 	else
@@ -63,6 +69,7 @@ end
 
 function IntCode:lessThan(mode1, mode2, mode3) --OpCode 7
 	if mode3 == 1 then mode3 = 0 end
+	--print("lessthan", self:getParam(mode1, 1), self:getParam(mode2, 2), self:getParam(mode3, 3))
 	if self.memory[self:getParam(mode1, 1)] < self.memory[self:getParam(mode2, 2)] then
 		self.memory[self:getParam(mode3, 3)] = 1
 	else
@@ -72,6 +79,7 @@ function IntCode:lessThan(mode1, mode2, mode3) --OpCode 7
 end
 
 function IntCode:equals(mode1, mode2, mode3) --OpCode 8
+	--print("equals", self:getParam(mode1, 1), self:getParam(mode2, 2), self:getParam(mode3, 3))
 	if mode3 == 1 then mode3 = 0 end
 	if self.memory[self:getParam(mode1, 1)] == self.memory[self:getParam(mode2, 2)] then
 		self.memory[self:getParam(mode3, 3)] = 1
@@ -82,6 +90,8 @@ function IntCode:equals(mode1, mode2, mode3) --OpCode 8
 end
 
 function IntCode:adjustsBaseRelative(mode1) -- OpCode 9
+	--if mode3 == 1 then mode3 = 0 end
+	--print("adjustsBaseRelative", self:getParam(mode1, 1))
 	self.baseRelative = self.baseRelative + self.memory[self:getParam(mode1, 1)]
 	self.pointer = self.pointer + 2
 end
@@ -98,16 +108,25 @@ function IntCode:getParam(mode, parameter)
 	end
 end
 
+function IntCode:adjustParameter(p)
+	if self.memory[p] == nil then
+		self.memory[p] = 0
+	end
+end
+
 function IntCode:inmediateParam(p)
+	self:adjustParameter(self.pointer + p)
 	return self.pointer + p
 end
 
 function IntCode:positionParam(p) -- integer
 	--p = p or error("Parametro no existe en la memoria")
+	self:adjustParameter(self.memory[self.pointer + p] + 1)
 	return self.memory[self.pointer + p] + 1
 end
 
 function IntCode:relativeParam(p)
+	self:adjustParameter(self.memory[self.pointer + p] + self.baseRelative + 1)
 	return self.memory[self.pointer + p] + self.baseRelative + 1
 end
 

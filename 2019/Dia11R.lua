@@ -40,11 +40,13 @@ local function answer1()
 	
 	while true do
 		nextColor = getNextColor(panels, pos)
-		--robot:run(nextColor)
-		local newColor = robot:run(nextColor,true)
+		--robot:addInputValue(nextColor)
+		local newColor = robot:run(nextColor, true)
 		if newColor == nil then break end
 		table.insert(panels, {x = pos.x, y = pos.y, color = newColor})
-		local nextDir = robot:run(nil,true)
+		--robot:run(nil, true)
+		local nextDir = robot:run(nil, true)
+		--robot:run()
 		if nextDir == nil then break end
 		if nextDir == 0 then nextDir = -1 end
 		orientation = orientation + nextDir
