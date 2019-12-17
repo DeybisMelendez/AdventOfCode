@@ -1,195 +1,127 @@
-file = io.open("Dia11.txt", "r") -- Se requiere un archivo Dia11.txt para ejecutar
-local text = file:read("*a")
-file:close()
-
--- Funciones
--- Funcion que divide una cadena de texto con un delimitador
-local function split(str, del) --String, Delimiter
-    local t = {}
-    for value in str:gmatch(del) do
-        table.insert(t, tonumber(value))
-    end
-    return t
-end
-local function copyTable(t)
-    local n = {}
-    for i, v in pairs(t) do
-        n[i] = v
-    end
-    return n
-end
-local input = split(text, "[^,]+")
-
-local function newIntCode(i)
-    local t = {}
-    t.input = copyTable(i)
-    t.nextInput = 1
-    --t.i = i1 --tabla con los inputs
-    t.pointer = 1
-    t.baseRelative = 0
-    --t.i2 = i2
-    function t:intCode(inputValue) --inputValue debe ser una tabla
-        --self.i = self.i or inputValue
-		if not (inputValue == nil) then table.insert(self.inputValue, inputValue) end
-        local opCode
-        while true do
-            local code = tostring(self.input[self.pointer])
-            for _=1, 5-(code:len()) do
-                code = "0" .. code
-            end
-            opCode = tonumber(code:sub(code:len()-1, code:len()))
-            if opCode == 99 then return end --input[input[pointer+1]+1] end
-            local param1, param2, param3-- parametro 3 tecnicamente no requiere modo inmediato
-            -- Modos
-            --TODO agregar modo 2 a los parametros
-            --parametro 1
-	            if tonumber(code:sub(3,3)) == 2 then
-	                param1 = self.input[self.pointer+1]+1 + self.baseRelative
-	            elseif tonumber(code:sub(3,3)) == 1 then
-	                param1 = self.pointer+1
-	            elseif tonumber(code:sub(3,3)) == 0 then
-	                param1 = self.input[self.pointer+1]+1
-	            end
-            --parametro 2
-            if opCode ~= 4 and opCode ~= 3 then
-                if tonumber(code:sub(2,2)) == 2 then
-                    param2 = self.input[self.pointer+2]+1 + self.baseRelative
-                elseif tonumber(code:sub(2,2)) == 1 then
-                    param2 = self.pointer+2
-                elseif tonumber(code:sub(2,2)) == 0 then
-                    param2 = self.input[self.pointer+2]+1
-                end
-            end
-            --parametro 3
-            if opCode ~= 4 and opCode ~= 5 and opCode ~=6 and opCode ~= 9 then
-                if tonumber(code:sub(1,1)) == 2 then
-                    param3 = self.input[self.pointer+3]+1 + self.baseRelative
-                end
-                if tonumber(code:sub(1,1)) == 1 then
-                    param3 = self.pointer+3
-                elseif tonumber(code:sub(1,1)) == 0 then
-                    param3 = self.input[self.pointer+3]+1
-                end
-            end
-            -- OP CODES
-            --local continue = false
-            if opCode == 1 then
-                self.input[param3] = self.input[param1] + self.input[param2]
-                self.pointer = self.pointer + 4
-            elseif opCode == 2 then
-                self.input[param3] = self.input[param1] * self.input[param2]
-                self.pointer = self.pointer + 4
-            -- nuevas instrucciones PARTE 1
-            elseif opCode == 3 then
-				--if inputValue[self.nextInput] == nil then return end
-                self.input[param3] = self.inputValue[self.nextInput]
-                self.nextInput = self.nextInput+1
-                self.pointer = self.pointer + 2
-            elseif opCode == 4 then
-                -- self.input = input
-                -- self.nextInput = nextInput
-                self.pointer = self.pointer + 2
-                return self.input[param1]--input[input[pointer+1]+1]
-            -- Nuevas instrucciones PARTE 2
-            elseif opCode == 5 then
-                if not (self.input[param1] == 0) then
-                    self.pointer = self.input[param2]+1
-                else
-                    self.pointer = self.pointer + 3
-                end
-            elseif opCode == 6 then
-                if self.input[param1] == 0 then
-                    self.pointer = self.input[param2]+1
-                else
-                    self.pointer = self.pointer + 3
-                end
-            elseif opCode == 7 then
-                if self.input[param1] < self.input[param2] then
-                    self.input[param3] = 1
-                else
-                    self.input[param3] = 0
-                end
-                self.pointer = self.pointer + 4
-            elseif opCode == 8 then
-                if self.input[param1] == self.input[param2] then
-                    self.input[param3] = 1
-                else
-                    self.input[param3] = 0
-                end
-                self.pointer = self.pointer + 4
-            elseif opCode == 9 then
-                self.baseRelative = self.baseRelative + self.input[param1]
-                --if self.baseRelative < 0 then self.baseRelative = 0 end
-                self.pointer = self.pointer + 2
-            else
-                error("opCode desconocido: " .. opCode)
-            end
+-- require Love2D to draw
+local inputCode = {
+3,8,1005,8,358,1106,0,11,0,0,0,104,1,104,0,3,8,102,-1,8,10,1001,10,1,10,4,10,1008,8,1,10,4,10,101,0,8,29,1,1104,7,10,3,8,102,-1,8,10,1001,10,1,10,4,10,108,0,8,10,4,10,1002,8,1,54,1,103,17,10,1,7,3,10,2,8,9,10,3,8,102,-1,8,10,1001,10,1,10,4,10,1008,8,1,10,4,10,102,1,8,89,1,1009,16,10,1006,0,86,1006,0,89,1006,0,35,3,8,102,-1,8,10,101,1,10,10,4,10,1008,8,0,10,4,10,102,1,8,124,1,105,8,10,1,2,0,10,1,1106,5,10,3,8,1002,8,-1,10,101,1,10,10,4,10,1008,8,0,10,4,10,1001,8,0,158,1,102,2,10,1,109,17,10,1,109,6,10,1,1003,1,10,3,8,1002,8,-1,10,101,1,10,10,4,10,108,1,8,10,4,10,1001,8,0,195,1006,0,49,1,101,5,10,1006,0,5,1,108,6,10,3,8,102,-1,8,10,1001,10,1,10,4,10,1008,8,0,10,4,10,102,1,8,232,2,1102,9,10,1,1108,9,10,3,8,1002,8,-1,10,101,1,10,10,4,10,1008,8,1,10,4,10,1002,8,1,262,1006,0,47,3,8,1002,8,-1,10,101,1,10,10,4,10,108,0,8,10,4,10,101,0,8,286,1006,0,79,2,1003,2,10,2,107,0,10,1006,0,89,3,8,1002,8,-1,10,101,1,10,10,4,10,1008,8,1,10,4,10,101,0,8,323,1006,0,51,2,5,1,10,1,6,15,10,2,1102,3,10,101,1,9,9,1007,9,905,10,1005,10,15,99,109,680,104,0,104,1,21101,838211572492,0,1,21101,0,375,0,1106,0,479,21102,1,48063328668,1,21102,386,1,0,1106,0,479,3,10,104,0,104,1,3,10,104,0,104,0,3,10,104,0,104,1,3,10,104,0,104,1,3,10,104,0,104,0,3,10,104,0,104,1,21102,1,21679533248,1,21101,0,433,0,1105,1,479,21102,235190455527,1,1,21102,444,1,0,1106,0,479,3,10,104,0,104,0,3,10,104,0,104,0,21101,0,837901247244,1,21102,1,467,0,1106,0,479,21101,0,709488169828,1,21102,1,478,0,1105,1,479,99,109,2,22102,1,-1,1,21102,1,40,2,21101,0,510,3,21102,1,500,0,1105,1,543,109,-2,2106,0,0,0,1,0,0,1,109,2,3,10,204,-1,1001,505,506,521,4,0,1001,505,1,505,108,4,505,10,1006,10,537,1102,1,0,505,109,-2,2106,0,0,0,109,4,2101,0,-1,542,1207,-3,0,10,1006,10,560,21101,0,0,-3,21201,-3,0,1,21202,-2,1,2,21102,1,1,3,21102,1,579,0,1105,1,584,109,-4,2106,0,0,109,5,1207,-3,1,10,1006,10,607,2207,-4,-2,10,1006,10,607,21202,-4,1,-4,1106,0,675,21202,-4,1,1,21201,-3,-1,2,21202,-2,2,3,21101,0,626,0,1106,0,584,22101,0,1,-4,21102,1,1,-1,2207,-4,-2,10,1006,10,645,21102,1,0,-1,22202,-2,-1,-2,2107,0,-3,10,1006,10,667,22101,0,-1,1,21102,1,667,0,105,1,542,21202,-2,-1,-2,22201,-4,-2,-4,109,-5,2105,1,0
+}
+function deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value)
         end
+        setmetatable(copy, deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
     end
-    return t
+    return copy
 end
-
-local function tableHasPos(t, v)
-	for _, value in pairs(t) do
-		if value.x == v.x and value.y == v.y then
-			return value.color
+local function getNextColor(table, pos)
+	if #table > 0 then
+		for _, value in pairs(table) do
+			if value.x == pos.x and value.y == pos.y then
+				return value.color
+			end
 		end
 	end
 	return 0
 end
 
-local robot = newIntCode(input)
-robot.results = {}
-robot.direction = {{x=0,y=1}, {x=1,y=0}, {x=0,y=-1}, {x=-1,y=0}}-- arriba, derecha, abajo, izquierda
-robot.actualDir = 1 -- direction index 1 up
-robot.pos = {x=0,y=0, color = 0}
-robot.map = {}
-for _=1, 10 do
-	local t = {}
-	for _=1, 10 do
-		table.insert(t, 0)
-	end
-	table.insert(robot.map, t)
-end
-print("map creado")
-function robot:paint()
-	local newColor, nextDir, color
-	local tcolor = {}
-	while true do
-		color = tableHasPos(self.results, self.pos)
-		--Obtenemos los nuevos valores
-		newColor = self:intCode(color)
-		nextDir = self:intCode()
-		print(newColor)
-		print(nextDir)
-		--if true then return end
-		--pintamos
-		if newColor == nil then break end
-		self.pos.color = newColor
-		table.insert(self.results, self.pos)
-		--self.map[self.pos.x][self.pos.y] = newColor
-		-- guardamos el camino si no hemos pasado por ese punto
-		--local pos = {x = self.pos.x, y = self.pos.y}
-		--if not tableHasPos(self.results, pos) then
-		--	table.insert(self.results, pos)
-			--print(#self.results)
-		--end
-		--movemos
-		if nextDir == nil then break end
-		if tonumber(nextDir) == 0 then nextDir = -1 end
-		if nextDir ~= 1 then error("nextDir no es igual a 1", nextDir) end
-		print(nextDir)
-		self.actualDir = self.actualDir + nextDir
-		if self.actualDir <= 0 then
-			self.actualDir = self.actualDir + #self.direction
-		elseif self.actualDir > #self.direction then
-			self.actualDir = self.actualDir - #self.direction
+local function setPaint(panels, pos, color)
+	local painted = false
+	if #panels > 0 then
+		for i, value in pairs(panels) do
+			if value.x == pos.x and value.y == pos.y then
+				painted = true
+				if not(value.color == color) then
+					panels[i].color = color
+				end
+			end
 		end
-		local step = {x = self.direction[self.actualDir].x, y = self.direction[self.actualDir].y}
-		self.pos.x, self.pos.y = self.pos.x + step.x, self.pos.y + step.y
-		print(self.pos.x, self.pos.y)
 	end
-	return #self.results
+	if not painted and not(color == 0) then
+		table.insert(panels, {x = pos.x, y = pos.y, color = color})
+	end
+	return panels
+end
+local IntCode = require"IntCode"
+
+local function answer1()
+	local robot = deepcopy(IntCode)
+	robot:setMemory(deepcopy(inputCode))
+	local pos = {x = 0, y = 0}
+	local panels = {}
+	local nextColor
+	local newColor
+	local direction = {{x=0, y=-1}, {x=1,y=0}, {x=0,y=1}, {x=-1,y=0}}
+	local orientation = 1
+	
+	while true do
+		nextColor = getNextColor(panels, pos)
+		robot:addInputValue(nextColor)
+		local newColor = robot:run(nil, true)
+		if newColor == nil then break end
+		panels = setPaint(panels, pos, newColor)
+		local nextDir = robot:run(nil, true)
+		if nextDir == nil then break end
+		if nextDir == 0 then nextDir = -1 end
+		orientation = orientation + nextDir
+		if orientation < 1 then
+			orientation = #direction
+		elseif orientation > #direction then
+			orientation = 1
+		end
+		pos.x, pos.y = pos.x + direction[orientation].x, pos.y + direction[orientation].y
+		--print(nextColor, newColor, nextDir, pos.x, pos.y, orientation, #panels)
+	end
+	return #panels
 end
 
-print("answer 1 is", robot:paint())
+local function answer2()
+	local robot = deepcopy(IntCode)
+	robot:setMemory(deepcopy(inputCode))
+	local pos = {x = 0, y = 0}
+	local panels = {{x = 0, y = 0, color = 1}}
+	local nextColor
+	local newColor
+	local direction = {{x=0, y=-1}, {x=1,y=0}, {x=0,y=1}, {x=-1,y=0}}
+	local orientation = 1
+	
+	while true do
+		nextColor = getNextColor(panels, pos)
+		robot:addInputValue(nextColor)
+		local newColor = robot:run(nil, true)
+		if newColor == nil then break end
+		panels = setPaint(panels, pos, newColor)
+		local nextDir = robot:run(nil, true)
+		if nextDir == nil then break end
+		if nextDir == 0 then nextDir = -1 end
+		orientation = orientation + nextDir
+		if orientation < 1 then
+			orientation = #direction
+		elseif orientation > #direction then
+			orientation = 1
+		end
+		pos.x, pos.y = pos.x + direction[orientation].x, pos.y + direction[orientation].y
+		print(nextColor, newColor, nextDir, pos.x, pos.y, orientation, #panels)
+	end
+	return panels
+end
+local answer1 = answer1()
+local answer2 = answer2()
+function love.draw()
+	love.graphics.setColor(1,1,1)
+	love.graphics.print("answer 1 is" .. answer1, 0,0)
+	love.graphics.print("answer 2 is", 0, 20)
+	if answer2 then
+		for _, panel in ipairs(answer2) do
+			if panel.color == 1 then
+				love.graphics.setColor(0,1,0)
+				love.graphics.rectangle("fill", panel.x*10, 100 + panel.y*10, 10, 10)
+			end
+		end
+	end
+end
+
+--print("the answer 1 is:", answer1())
+-- TO PRINT ANSWER 2 NEEDS LOVE2D

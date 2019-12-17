@@ -1,4 +1,4 @@
-local file = io.open("Dia8.txt", "r") -- Se requiere un archivo Dia8.txt para ejecutar
+local file = io.open("Dia08.txt", "r") -- Se requiere un archivo Dia8.txt para ejecutar
 local text = file:read("*a")
 file:close()
 

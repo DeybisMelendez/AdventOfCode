@@ -1,5 +1,5 @@
 do
-local file = io.open("Dia3.txt", "r") -- Se requiere un archivo Dia3.txt para ejecutar
+local file = io.open("Dia03.txt", "r") -- Se requiere un archivo Dia3.txt para ejecutar
 local input = file:read("*a")
 file:close()
 
