@@ -5,18 +5,26 @@ local inputCode = {
 --1102,34915192,34915192,7,4,7,99,0
 --109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99
 }
-
-local function copyTable(t)
-    local n = {}
-    for i, v in pairs(t) do
-        n[i] = v
+function deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value)
+        end
+        setmetatable(copy, deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
     end
-    return n
+    return copy
 end
+
 local IntCode = require"IntCode"
 
-
-local intCode1 = IntCode:new(copyTable(inputCode))
-local intCode2 = IntCode:new(copyTable(inputCode))
-print("answer 1 is", intCode1:run({1}))
-print("answer 2 is", intCode2:run({2}))
+local intCode1 = deepcopy(IntCode)
+intCode1:setMemory(deepcopy(inputCode))
+local intCode2 = deepcopy(IntCode)
+intCode2:setMemory(deepcopy(inputCode))
+print("answer 1 is", intCode1:run(1, true))
+print("answer 2 is", intCode2:run(2, true))

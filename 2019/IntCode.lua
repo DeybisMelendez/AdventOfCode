@@ -38,7 +38,7 @@ function IntCode:input(mode1)--, inputValue) -- OpCode 3
 end
 
 function IntCode:outputs(mode1) -- OpCode 4
-	if mode1 == 1 then mode1 = 0 end
+	--if not(mode1 == 0) then mode1 = 0 end --desactivando esto funciona el dia 11R
 	table.insert(self.output, self.memory[self:getParam(mode1, 1)])
 	--self.output = self.memory[self:getParam(mode1, 1)]
 	self.pointer = self.pointer + 2
