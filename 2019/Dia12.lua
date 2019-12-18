@@ -3,17 +3,6 @@ local input = {
 	{pos = {x=16, y=19, z=9}, speed = {x=0,y=0,z=0}},
 	{pos ={x=0, y=3, z=6}, speed = {x=0,y=0,z=0}},
 	{pos ={x=11, y=0, z=11}, speed = {x=0,y=0,z=0}}
-
---	{pos = {x=-1, y=0, z=2}, speed = {x=0,y=0,z=0}},
---	{pos = {x=2, y=-10, z=-7}, speed = {x=0,y=0,z=0}},
---	{pos ={x=4, y=-8, z=8}, speed = {x=0,y=0,z=0}},
---	{pos ={x=3, y=5, z=-1}, speed = {x=0,y=0,z=0}}
-	
---	{pos = {x=-8, y=-10, z=0}, speed = {x=0,y=0,z=0}},
---	{pos = {x=5, y=5, z=10}, speed = {x=0,y=0,z=0}},
---	{pos ={x=2, y=-7, z=3}, speed = {x=0,y=0,z=0}},
---	{pos ={x=9, y=-8, z=-3}, speed = {x=0,y=0,z=0}}
-
 }
 function deepcopy(orig)
     local orig_type = type(orig)
@@ -61,7 +50,6 @@ local function answer1()
 		for _, v in ipairs(planets) do
 			-- aplicamos velocidad
 			v.pos = getNewPos(v)
-			--print(step, v1.pos.x, v1.pos.y, v1.pos.z, v1.speed.x, v1.speed.y, v1.speed.z)
 		end
 	end
 	for _, v in ipairs(planets) do
@@ -73,7 +61,6 @@ end
 local function pos2str(pos, next)
 	local str = ""
 	for i, v in ipairs(pos) do
-		--str = v.pos.x .. v.pos.y .. v.pos.z .. v.speed.x .. v.speed.y .. v.speed.z
 		if next == "x" then str = str .. v.pos.x .. v.speed.x
 		elseif next == "y" then str = str .. v.pos.y .. v.speed.y
 		elseif next == "z" then str = str .. v.pos.z .. v.speed.z
@@ -82,27 +69,34 @@ local function pos2str(pos, next)
 	return str
 end
 
-local function gcd(a,b)
-  if type(a) == "number" and type(b) == "number" and 
-        a == math.floor(a) and b == math.floor(b) then
-    if b == 0 then
-      return a
-    else
-      return gcd(b, a % b) -- tail recursion
+function gcd( m, n )
+    while n ~= 0 do
+        local q = m
+        m = n
+        n = q % n
     end
-  else
-    error("Invalid argument to gcd (" .. tostring(a) .. "," .. 
-          tostring(b) .. ")", 2)
-  end
+    return m
+end
+ 
+function lcm( m, n )
+    return ( m ~= 0 and n ~= 0 ) and m * n / gcd( m, n ) or 0
+end
+
+local function calcXYZ(x,y,z)
+	local xy
+	xy = lcm(x, y)
+	local result = lcm(xy,z)
+	return tostring(("%.f"):format(result))
 end
 
 local function answer2()
 	local planets = deepcopy(input)
-	local history = {}
-	local step = 0
-	local next = "x"
-	local x, y, z, xy
+	local step = 1
+	local x, y, z
 	local reset = false
+	local xstr,ystr,zstr = pos2str(planets, "x"), pos2str(planets, "y"), pos2str(planets, "z")
+	local target = {}
+	target[xstr], target[ystr], target[zstr] = true, true, true
 	while true do
 		for i1, v1 in ipairs(planets) do
 			-- aplicamos la gravedad
@@ -113,39 +107,14 @@ local function answer2()
 		for _, v in ipairs(planets) do
 			-- aplicamos velocidad
 			v.pos = getNewPos(v)
-			--print(step, v1.pos.x, v1.pos.y, v1.pos.z, v1.speed.x, v1.speed.y, v1.speed.z)
 		end
-		local str = pos2str(planets, next)
-		if history[str] then
-			if next == "x" then
-				next = "y"
-				x = step
-				reset = true
-				print("x encontrado", step)
-			elseif next == "y" then
-				next = "z"
-				y = step
-				reset = true
-				print("y encontrado", step)
-			elseif next == "z" then
-				z = step
-				print("z encontrado", step)
-				break
-			end
-		end
-		history[str] = true
+		if target[pos2str(planets, "x")] and x == nil then x = step end
+		if target[pos2str(planets, "y")] and y == nil then y = step end
+		if target[pos2str(planets, "z")] and z == nil then z = step end
+		if not(x == nil) and not(y==nil) and not(z==nil) then break end
 		step = step + 1
-		if reset then step = 0 reset = false history = {} planets = deepcopy(input) end
-		--if step == next then print(step) next = next + 100000 end
-		--print(step)
 	end
-	local g = gcd(x, y)
-	xy = x * y / g
-	print("xy",xy, "gcd", g)
-	g = gcd(xy, z)
-	print("g", g)
-	return tostring(("%.f"):format(xy * z /g))
+	return calcXYZ(x,y,z)
 end
---print("answer 1 is", answer1())
+print("answer 1 is", answer1())
 print("answer 2 is", answer2())
-print(tostring(("%.f"):format(100000000000000000000000000000000000000000000000000000000000000000000)))
