@@ -17,50 +17,45 @@ function deepcopy(orig)
     return copy
 end
 
-local function sortVectors(a, b)
-	return a.x < b.x and a.y < b.y
-end
-
 local Cabinet = require "IntCode"
+Cabinet:setMemory(deepcopy(input))
+local viewport = {}
 
-local function getViewport()
-	Cabinet:setMemory(deepcopy(input))
-	Cabinet:run() -- obtenemos la pantalla con Cabinet.output (tabla)
-	local viewport =""
-	local y = 0
-	local x = 0
-	local count = 0
+local function runCabinet(joystick)
+	viewport = {} -- limpiar viewport
+	Cabinet.output = {} -- limpiar output
+	Cabinet:run(joystick) -- obtenemos la pantalla con Cabinet.output (tabla)
 	for i=1, #Cabinet.output, 3 do -- i=x, i+1=y, i+2=idTile
-		print(Cabinet.output[i], Cabinet.output[i+1], Cabinet.output[i+2])
+		--print(Cabinet.output[i], Cabinet.output[i+1], Cabinet.output[i+2])
 		local tile = Cabinet.output[i+2]
-		local char = ""
-		if tile == 0 then
-			char = " "
-		elseif tile == 1 then
-			char = "#"
-		elseif tile == 2 then
-			char = "-"
-			count = count + 1
-		elseif tile == 3 then
-			char = "_"
-		elseif tile == 4 then
-			char = "@"
-		end
-		if x < Cabinet.output[i] then  x = Cabinet.output[i] + 1 end
-		if y < Cabinet.output[i+1] then
-			viewport = viewport .. "\n" .. char
-			y = Cabinet.output[i+1]
-		else
-			viewport = viewport .. char
+		local x = Cabinet.output[i] --tablas en lua comienzan en 1
+		local y = Cabinet.output[i+1]
+		local score
+		if viewport[y] then viewport[y][x] = tile
+		else viewport[y] = {} viewport[y][x] = tile
 		end
 	end
-	return viewport, count, x, y+1
+	if score then return score end
 end
-local viewport, answer1, width, height = getViewport()
+
+runCabinet(nil) -- iniciamos el juego
+
+local function answer1()
+	local count = 0
+	for _, y in ipairs(viewport) do
+		for _, x in ipairs(y) do
+			print(x)
+			if x == 2 then
+				count = count + 1
+			end
+		end
+	end
+	return count
+end
 
 local function answer2()
 	Cabinet.memory[1] = 2
 	
 end
 
-print("answer 1 is", answer1)
+print("answer 1 is", answer1())
