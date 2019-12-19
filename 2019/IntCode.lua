@@ -1,4 +1,4 @@
-local IntCode = {memory = {}, pointer = 1, output = {}, inputs = {}, nextInput=1, baseRelative = 0}
+local IntCode = {memory = {}, pointer = 1, output = {}, inputs = {}, nextInput=1, baseRelative = 0, stopped = false}
 function IntCode:setMemory(memory)
 	self.memory = memory
 end
@@ -15,7 +15,7 @@ function IntCode:getOutput()
 end
 function IntCode:getInputValue()
 	self.nextInput = self.nextInput + 1
-	return self.inputs[self.nextInput-1] or self.inputs[#self.inputs]
+	return self.inputs[self.nextInput-1] or self.inputs[#self.inputs] --desactivar or si es necesario
 end
 
 function IntCode:add(mode1, mode2, mode3) -- OpCode 1
@@ -156,7 +156,7 @@ function IntCode:run(inputValue, out)
 		elseif opCode == 7 then self:lessThan(mode1, mode2, mode3)
 		elseif opCode == 8 then self:equals(mode1, mode2, mode3)
 		elseif opCode == 9 then self:adjustsBaseRelative(mode1)
-		elseif opCode == 99 then break --return self.output -- Detenemos el programa
+		elseif opCode == 99 then self.stopped = true break --return self.output -- Detenemos el programa
 		else print("ultimo opCode: " .. opCode) error("no existe opCode")
 		end
 	end

@@ -17,34 +17,29 @@ function deepcopy(orig)
     return copy
 end
 
-local Cabinet = require "IntCode"
-Cabinet:setMemory(deepcopy(input))
-local viewport = {}
+local IntCode = require "IntCode"
 
-local function runCabinet(joystick)
-	viewport = {} -- limpiar viewport
-	Cabinet.output = {} -- limpiar output
-	Cabinet:run(joystick) -- obtenemos la pantalla con Cabinet.output (tabla)
-	for i=1, #Cabinet.output, 3 do -- i=x, i+1=y, i+2=idTile
+local function getMap(output)
+	local map = {}
+	local score
+	for i=1, #output, 3 do -- i=x, i+1=y, i+2=idTile
 		--print(Cabinet.output[i], Cabinet.output[i+1], Cabinet.output[i+2])
-		local tile = Cabinet.output[i+2]
-		local x = Cabinet.output[i] --tablas en lua comienzan en 1
-		local y = Cabinet.output[i+1]
-		local score
-		if viewport[y] then viewport[y][x] = tile
-		else viewport[y] = {} viewport[y][x] = tile
+		local tile = output[i+2]
+		local x = output[i] --tablas en lua comienzan en 1
+		local y = output[i+1]
+		if map[y] then map[y][x] = tile
+		else map[y] = {} map[y][x] = tile
 		end
+		if map[-1] then if map[-1][0] then score = map[-1][0] end end
 	end
-	if score then return score end
+	return map, score
 end
 
-runCabinet(nil) -- iniciamos el juego
-
-local function answer1()
+local function getBlockCount(map)
 	local count = 0
-	for _, y in ipairs(viewport) do
+	for _, y in ipairs(map) do
 		for _, x in ipairs(y) do
-			print(x)
+			--print(x)
 			if x == 2 then
 				count = count + 1
 			end
@@ -53,9 +48,72 @@ local function answer1()
 	return count
 end
 
-local function answer2()
-	Cabinet.memory[1] = 2
-	
+local function answer1()
+	Cabinet = deepcopy(IntCode)
+	Cabinet:setMemory(deepcopy(input))
+	local count = 0
+	while true do
+		Cabinet:run(nil, true) Cabinet:run(nil, true) --step 1 step 2
+		local output = Cabinet:run(nil, true) -- step 3
+		print(Cabinet.output[#Cabinet.output-2], Cabinet.output[#Cabinet.output-1], Cabinet.output[#Cabinet.output])
+		if output == nil then break end
+		if output == 2 then count = count + 1 end
+	end
+	return count
 end
 
-print("answer 1 is", answer1())
+local function getJoystick(map)
+	local ball, pad
+	for y, v1 in ipairs(map) do
+		for x, v2 in ipairs(v1) do
+			if v2 == 4 then ball = {x = x, y = y} end
+			if v2 == 3 then pad = {x = x, y = y} end
+			if ball and pad then break end
+		end
+	end
+	print("ball", ball.x, ball.y, "pad", pad.x, pad.y)
+	--if ball.y > #map then error("bola sale del mapa") end
+	if ball.x > pad.x then return 1
+	elseif ball.x < pad.x then return -1
+	elseif ball.x == pad.x then return 0
+	end
+end
+
+local function answer2( )
+	local Cabinet = deepcopy(IntCode)
+	Cabinet:setMemory(deepcopy(input))
+	Cabinet.memory[1] = 2
+	local score, joystick = 0, 0
+	local pad, ball
+	while not Cabinet.stopped do
+		local xpos, ypos, tile = Cabinet:run(joystick, true), Cabinet:run(nil, true), Cabinet:run(nil, true)
+		Cabinet.inputs = {}
+		--if xpos == nil and ypos == nil and tile == nil then break end
+		if (xpos == -1) and (ypos == 0) then
+			score = tile
+		elseif tile == 3 then
+			pad = xpos
+		elseif tile == 4 then
+			ball = xpos
+		end
+		if pad and ball then
+			--Cabinet = deepcopy(IntCode)
+			--Cabinet:setMemory(deepcopy(input))
+			--Cabinet.memory[1] = 2
+			if pad > ball then
+				joystick = -1
+			elseif pad < ball then
+				joystick = 1
+			elseif pad == ball then
+				joystick = 0
+			end
+			
+			print(pad, ball, score)
+			--pad, ball = nil, nil
+		end
+	end
+	return score
+end
+
+--print("answer 1 is", answer1())
+print("answer 2 is", answer2())
