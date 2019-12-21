@@ -20,32 +20,44 @@ end
 local function answer1()
 	local dir = {1,4,2,3} -- Norte, Este, Sur, Oeste
 	local mov = {{0,-1}, {1,0}, {0,1}, {-1,0}}
+	local result = 0
 	local pointer = 1
 	local Droid = deepcopy(IntCode)
 	Droid:setMemory(deepcopy(input))
 	Droid.steps = {}
 	Droid.pos = {0, 0}
 	while true do
-		Droid:run(dir[pointer], true)
-		local state = Droid:getOutput()
+		local state = Droid:run(dir[pointer], true)
 		if state == 0 then
 			--pared
-			pointer = pointer + 1
-			if pointer > 4 then
-				pointer = 1
-			elseif pointer < 1 then
-				pointer = 4
-			end
+			pointer = pointer - 1
 		elseif state == 1 then
 			--moverse
-			table.insert(Droid.steps, Droid.pos)
-			Droid.pos = {Droid.pos[1] + mov[pointer][1], Droid.pos[2] + mov[pointer][2]}
-			--pointer = pointer + 1
+			Droid.pos[1], Droid.pos[2] = Droid.pos[1] + mov[pointer][1], Droid.pos[2] + mov[pointer][2]
+			table.insert(Droid.steps, deepcopy(Droid.pos))
+			pointer = pointer + 1
 		elseif state == 2 then
 			-- final
+			for i, v in ipairs(Droid.steps) do
+				local unique = true
+				for i2, v2 in ipairs(Droid.steps) do
+					if not (i == i2) then
+						if (v[1] == v2[1]) and (v[2] == v2[2]) then
+							unique = false
+						end
+					end
+				end
+				if unique then result = result + 1 end
+			end
 			break
+		end
+		if pointer > 4 then
+			pointer = 1
+		elseif pointer < 1 then
+			pointer = 4
 		end
 		print(state, pointer, Droid.pos[1], Droid.pos[2])
 	end
+	print(result, #Droid.steps)
 end
 answer1()
