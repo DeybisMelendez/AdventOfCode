@@ -25,3 +25,13 @@ Si el joystick está inclinado hacia la derecha , proporcione 1.
 El gabinete de arcade también tiene una pantalla de segmento capaz de mostrar un solo número que representa la puntuación actual del jugador. Cuando se especifican tres instrucciones de salida X=-1, Y=0, la tercera instrucción de salida no es un mosaico; el valor, en cambio, especifica la nueva puntuación para mostrar en la visualización del segmento. Por ejemplo, una secuencia de valores de salida como -1,0,12345aparecería 12345como la puntuación actual del jugador.
 
 Completa el juego rompiendo todos los bloques. ¿Cuál es su puntaje después de que se rompe el último bloque?
+
+--- La segunda parte ---
+Después de recolectar ORE durante un tiempo, verifica su bodega de carga: 1 billón ( 1000000000000 ) de unidades de ORE.
+
+Con tanto mineral , dados los ejemplos anteriores:
+
+El 13312 ORE-por- FUELejemplo podría producir 82892753 FUEL .
+El 180697, OREpor FUELejemplo, podría producir 5586022 FUEL .
+El 2210736, OREpor FUELejemplo, podría producir 460664 FUEL .
+Dado 1 billón ORE, ¿cuál es la cantidad máxima FUELque puede producir?
