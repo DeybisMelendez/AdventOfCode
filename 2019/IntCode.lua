@@ -157,7 +157,7 @@ function IntCode:run(inputValue, out)
 		elseif opCode == 8 then self:equals(mode1, mode2, mode3)
 		elseif opCode == 9 then self:adjustsBaseRelative(mode1)
 		elseif opCode == 99 then self.stopped = true break --return self.output -- Detenemos el programa
-		else print("ultimo opCode: " .. opCode) error("no existe opCode")
+		else print("ultimo opCode: " .. tostring(opCode)) error("no existe opCode")
 		end
 	end
 end
