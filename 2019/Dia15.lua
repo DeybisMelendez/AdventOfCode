@@ -86,7 +86,6 @@ local function answer2()
 	droid:exe() -- encontramos el tanque de oxigeno
 	droid.steps = {} -- reset a pasos y pos para contar
 	droid.pos = {0,0}
-	droid.hand = -1
 	droid:exe() -- ejecutamos hasta que el droid recorra todo el laberinto y vuelva al tanque de oxigeno
 	local minPath = droid:minPath()
 	print(minPath, #droid.steps, droid.pos[1], droid.pos[2])
