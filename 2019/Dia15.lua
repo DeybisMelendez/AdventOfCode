@@ -18,12 +18,14 @@ end
 
 -- Droid prototipo
 local Droid = require "IntCode"
-Droid.steps = {}
+Droid.steps = {{0, 0}}
 Droid.pos = {0, 0}
 Droid.index = 1
 Droid.dir = {1,4,2,3} -- Norte, Este, Sur, Oeste
 Droid.mov = {{0,-1}, {1,0}, {0,1}, {-1,0}}
 Droid.hand = 1 -- 1 right -1 left
+Droid.distance = 0
+Droid.maxDistance = 0
 
 function Droid:exe()
 	while true do
@@ -33,10 +35,26 @@ function Droid:exe()
 			self.index = self.index + self.hand
 		elseif state == 1 then
 			--moverse
-			table.insert(self.steps, deepcopy(self.pos))
 			self.pos[1], self.pos[2] = self.pos[1] + self.mov[self.index][1], self.pos[2] + self.mov[self.index][2]
 			self.index = self.index - self.hand
+			local last = self.steps[#self.steps-1]
+			if last then
+				if self.pos[1] == last[1] and self.pos[2] == last[2] then
+					table.remove(self.steps, #self.steps)
+					self.distance = self.distance - 1
+					if self.maxDistance < self.distance then
+						self.maxDistance = self.distance
+					end
+				else
+					self.distance = self.distance + 1
+					table.insert(self.steps, deepcopy(self.pos))
+				end
+			else
+				table.insert(self.steps, deepcopy(self.pos))
+				self.distance = self.distance + 1
+			end
 		elseif state == 2 then
+			self.distance = self.distance + 1
 			break
 		end
 		if self.index > 4 then
@@ -44,35 +62,18 @@ function Droid:exe()
 		elseif self.index < 1 then
 			self.index = 4
 		end
-		--print(state, self.index, self.pos[1], self.pos[2])
 	end
 end
-function Droid:minPath()
-	local result = -1 -- BUG: hay un paso se cuenta demas
-	for i, v in ipairs(self.steps) do
-		local unique = true
-		for i2, v2 in ipairs(self.steps) do
-			if not (i == i2) then
-				if (v[1] == v2[1]) and (v[2] == v2[2]) then
-					unique = false
-				end
-			end
-		end
-		if unique then result = result + 1 end
-	end
-	return result
-end
-
 local function answer1()
 	local droid = deepcopy(Droid)
 	droid:setMemory(deepcopy(input))
 	droid:exe()
-	local resultRight = droid:minPath()
+	local resultRight = droid.distance
 	droid = deepcopy(Droid)
 	droid:setMemory(deepcopy(input))
 	droid.hand = -1
 	droid:exe()
-	local resultLeft = droid:minPath()
+	local resultLeft = droid.distance
 	if resultRight > resultLeft then
 		return resultLeft
 	else
@@ -80,15 +81,4 @@ local function answer1()
 	end
 end
 
-local function answer2()
-	local droid = deepcopy(Droid)
-	droid:setMemory(deepcopy(input))
-	droid:exe() -- encontramos el tanque de oxigeno
-	droid.steps = {} -- reset a pasos y pos para contar
-	droid.pos = {0,0}
-	droid:exe() -- ejecutamos hasta que el droid recorra todo el laberinto y vuelva al tanque de oxigeno
-	local minPath = droid:minPath()
-	print(minPath, #droid.steps, droid.pos[1], droid.pos[2])
-end
 print("answer 1 is", answer1())
-answer2()
