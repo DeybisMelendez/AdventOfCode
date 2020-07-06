@@ -1,4 +1,6 @@
-local input = require "day03input"
+local file = io.open("day03input.txt", "r")
+local input = file:read("*a")
+file:close()
 
 local function answer1()
 	local houses = {}
