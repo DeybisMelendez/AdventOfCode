@@ -11,6 +11,7 @@ local function split(str, del) --String, Delimiter
 end
 local instructions = split(text, "[^\n]+")
 local wires = {}
+local wires2 = {}
 local result = {}
 
 local function calc(name)
@@ -55,4 +56,11 @@ local function answer1(x)
     end
     return calc(x)
 end
+local function answer2(x)
+    local b = result["a"]
+    result = {}
+    result["b"] = b
+    return calc(x)
+end
 print(answer1("a"))
+print(answer2("a"))
