@@ -1,25 +1,33 @@
 local input = "1321131112"
 
-local function answer1()
-    for _=1, 40 do
-        local actualChar = ""
+local function lookAndSay(val, num)
+    local result = ""
+    for _=1, val do
+        result = ""
+        local actualChar
         local countChar = 0
-        local newInput = ""
-        for i=1, #input do
-            local a = string.sub(input, i, i)
-            if actualChar == a then
-                countChar = countChar + 1
-            elseif countChar == 0 then
+        for i=1, #num do
+            local a = string.sub(num, i, i)
+            if actualChar == nil then
                 actualChar = a
                 countChar = 1
+            elseif actualChar == a then
+                countChar = countChar + 1
             else
-                newInput = countChar .. actualChar .. newInput
+                result = result .. countChar .. actualChar
+                actualChar = a
+                countChar = 1
             end
         end
-        print(#newInput)
-        input = newInput
+        if  not (actualChar == nil) then
+            result = result .. countChar .. actualChar
+        end
+        num = result
     end
-    return input
+    return result
+end
+local function answer1(str)
+    return #lookAndSay(40,str)
 end
 
-print(answer1())
+print(answer1(input))
