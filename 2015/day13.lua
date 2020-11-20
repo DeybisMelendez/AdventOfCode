@@ -1,69 +1,84 @@
-local file = io.open("day13input.txt", "r")
-local text = file:read("*a")
-file:close()
-text = text:gsub(" would", "")
-text = text:gsub("happiness units by sitting next to ", "")
-text = text:gsub("%.", "")
-function contains(table, element)
-    for _, value in pairs(table) do
-        if value == element then
-            return true
+require "utils"
+local text = string.readFile("day13input.txt")
+
+local function getInput(str)
+    str = str:gsub(" would", "")
+    str = str:gsub("happiness units by sitting next to ", "")
+    str = str:gsub("%.", "")
+    local people = {}
+    local input = {}
+    local split = string.split(str, "[^\n]+")
+    for i,v in ipairs(split) do
+        local t = string.split(v, "[^%s]+")
+        local index = t[1]
+        table.remove(t,1)
+        if type(input[index]) == "table" then
+            table.insert(input[index], t)
+        else
+            input[index] = {t}
+        end
+        if not table.contains(people, index) then
+            table.insert(people, index)
         end
     end
-    return false
-end
-local function split(str, del) --String, Delimiter
-    local t = {}
-    for value in str:gmatch(del) do
-        table.insert(t, value)
-    end
-    return t
-end
-local input = split(text, "[^\n]+")
-local people = {}
-for i,v in ipairs(input) do
-    input[i] = split(v, "[^%s]+")
-    if not contains(people, input[i][1]) then
-        table.insert(people, input[i][1])
-    end
+    return input, table.permute(people)
 end
 
-local function merge(t1,t2)
-    for _, v in ipairs(t2) do
-        table.insert(t1, v)
-    end
-    return t1
-end
-
-local function concat(a,b)
-    for i=1, #b do
-        table.insert(b[i], a)
-    end
-    return b
-end
-
-local function permute(t)
-    local perm = {}
-    if #t > 2 then
-        for i, v in ipairs(t) do
-            local topermute = {}
-            for i2, v2 in ipairs(t) do
-                if not(i == i2) then
-                    table.insert(topermute, v2)
-                end
+local function totalHappiness(input, combs)
+    local total = 0
+    for _,v in ipairs(combs) do
+        local newTotal = 0
+        for i2,v2 in ipairs(v) do
+            local next, back = i2+1,i2-1
+            if next > #v then next = 1 end
+            if back < 1 then back = #v end
+            local right = v[next]
+            local left = v[back]
+            for _, v3 in ipairs(input[v2]) do
+                    if v3[3] == right or v3[3] == left then
+                        if v3[1] == "gain" then
+                            newTotal = newTotal + v3[2]
+                        elseif v3[1] == "lose" then
+                            newTotal = newTotal - v3[2]
+                        end
+                    end
             end
-            perm = merge(perm, concat(v, permute(topermute)))
         end
-        return perm
-    else
-        return {{t[1],t[2]}, {t[2],t[1]}}
+        if newTotal > total then
+            total = newTotal
+        end
     end
+    return total
 end
 
-local combs = permute({1,2,3,4,5})
-for i,v in ipairs(combs) do
-    for i2,v2 in ipairs(v) do
-        io.write(v2 .. ", ")
-    end
-    io.write("\n")
+local function answer1(str)
+    local input, combs = getInput(str)
+    return totalHappiness(input, combs)
 end
+
+local function answer2(str)
+    local me = [[
+
+Damv would gain 0 happiness units by sitting next to Bob.
+Damv would gain 0 happiness units by sitting next to Carol.
+Damv would lose 0 happiness units by sitting next to David.
+Damv would lose 0 happiness units by sitting next to Eric.
+Damv would gain 0 happiness units by sitting next to Frank.
+Damv would gain 0 happiness units by sitting next to George.
+Damv would gain 0 happiness units by sitting next to Mallory.
+Alice would gain 0 happiness units by sitting next to Damv.
+Bob would gain 0 happiness units by sitting next to Damv.
+Carol would gain 0 happiness units by sitting next to Damv.
+David would gain 0 happiness units by sitting next to Damv.
+Eric would gain 0 happiness units by sitting next to Damv.
+Frank would gain 0 happiness units by sitting next to Damv.
+George would gain 0 happiness units by sitting next to Damv.
+Mallory would gain 0 happiness units by sitting next to Damv.]]
+    str = str .. me
+    print(str)
+    local input, combs = getInput(str)
+    return totalHappiness(input, combs)
+end
+
+print(answer1(text))
+print(answer2(text))
