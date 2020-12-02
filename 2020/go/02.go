@@ -26,14 +26,13 @@ func isValid(from int, to int, letter string, pass string) bool {
 }
 
 func isValid2(i1 int, i2 int, letter string, pass string) bool {
-	//fmt.Println(string(pass[i1-1]), string(pass[i2-1]))
-	//fmt.Println(string(pass[i1-1]) == letter && string(pass[i2-1]) != letter)
-	return (string(pass[i1-1]) == letter && string(pass[i2-1]) != letter) || (string(pass[i2-1]) == letter && string(pass[i1-1]) != letter)
+	a := string(pass[i1-1]) == letter && string(pass[i2-1]) != letter
+	b := string(pass[i2-1]) == letter && string(pass[i1-1]) != letter
+	return a || b
 }
 
 func answer1(inputStr string) int {
 	input := getInput(inputStr)
-	//fmt.Println(input)
 	result := 0
 	for _, v := range input {
 		from, _ := strconv.Atoi(v[1])
@@ -46,16 +45,16 @@ func answer1(inputStr string) int {
 	}
 	return result
 }
+
 func answer2(inputStr string) int {
 	input := getInput(inputStr)
-	//fmt.Println(input)
 	result := 0
 	for _, v := range input {
-		from, _ := strconv.Atoi(v[1])
-		to, _ := strconv.Atoi(v[2])
+		i1, _ := strconv.Atoi(v[1])
+		i2, _ := strconv.Atoi(v[2])
 		letter := v[3]
 		pass := v[4]
-		if isValid2(from, to, letter, pass) {
+		if isValid2(i1, i2, letter, pass) {
 			result++
 		}
 	}

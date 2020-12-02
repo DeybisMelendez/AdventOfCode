@@ -1,4 +1,4 @@
-package day1
+package main
 
 import (
 	"io/ioutil"
@@ -15,7 +15,7 @@ func answer1(inputStr string) int {
 	input := getInput(inputStr)
 	for i1, v1 := range input {
 		for i2, v2 := range input {
-			if i1 != i2 {
+			if i1 > i2 {
 				val1, _ := strconv.Atoi(v1)
 				val2, _ := strconv.Atoi(v2)
 				if val1+val2 == 2020 {
@@ -32,7 +32,7 @@ func answer2(inputStr string) int {
 	for i1, v1 := range input {
 		for i2, v2 := range input {
 			for i3, v3 := range input {
-				if i1 != i2 && i1 != i3 {
+				if i1 > i2 && i1 > i3 {
 					val1, _ := strconv.Atoi(v1)
 					val2, _ := strconv.Atoi(v2)
 					val3, _ := strconv.Atoi(v3)
