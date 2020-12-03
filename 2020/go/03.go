@@ -11,18 +11,18 @@ type vec struct {
 	y int
 }
 
-func answer1(inputStr string, x int, y int) int {
-	input := strings.Split(inputStr, "\n")
+func answer1(input string, x int, y int) int {
+	input = strings.Replace(input, "\n", "", -1)
 	pos := vec{0, 0}
 	trees := 0
-	for pos.y+1 < len(input) {
+	for pos.y*31+pos.x < len(input)-1 {
+		if string(input[pos.y*31+pos.x]) == "#" {
+			trees++
+		}
 		pos.x += x
 		pos.y += y
 		if pos.x > 30 {
 			pos.x -= 31
-		}
-		if string(input[pos.y][pos.x]) == "#" {
-			trees++
 		}
 	}
 	return trees
