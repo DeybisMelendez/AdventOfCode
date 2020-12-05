@@ -8,8 +8,16 @@ import (
 	"strings"
 )
 
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
 func getInput(inputStr string) []string {
-	return strings.Split(inputStr, "\n\n")
+	return strings.Split(inputStr, "\r\n\r\n") // windows \r\n\r\n linux \n\n
 }
 
 func getPassportParams(str string) []string {
@@ -46,8 +54,12 @@ func answer2(inputStr string) int {
 		passport := getPassportParams(v)
 		hasCID := false
 		isValid := true
+		keys := []string{}
 		for _, e := range passport {
 			key, value := e[:3], e[4:]
+			if !contains(keys, key) {
+				keys = append(keys, key)
+			}
 			switch key {
 			case "byr":
 				num, _ := strconv.Atoi(value)
@@ -90,7 +102,6 @@ func answer2(inputStr string) int {
 			case "hcl":
 				regex := regexp.MustCompile("#[0-9,a-f]+")
 				hex := regex.FindString(value)
-				//fmt.Println(hex)
 				if hex == "" || len(hex) != 7 {
 					isValid = false
 					break
@@ -115,10 +126,10 @@ func answer2(inputStr string) int {
 		}
 		if isValid {
 			if hasCID {
-				if len(passport) == 8 {
+				if len(keys) == 8 {
 					valids++
 				}
-			} else if len(passport) == 7 {
+			} else if len(keys) == 7 {
 				valids++
 			}
 		}
