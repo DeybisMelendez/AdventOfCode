@@ -58,7 +58,7 @@ func answer2(inputStr string) int {
 			key, value := e[:3], e[4:]
 			switch key {
 			case "byr":
-				regex := regexp.MustCompile("\\d{4}")
+				regex := regexp.MustCompile("^\\d{4}$")
 				digits := regex.FindString(value)
 				num, err := strconv.Atoi(digits)
 				if !(err == nil && num >= 1920 && num <= 2002) {
@@ -66,7 +66,7 @@ func answer2(inputStr string) int {
 					break
 				}
 			case "iyr":
-				regex := regexp.MustCompile("\\d{4}")
+				regex := regexp.MustCompile("^\\d{4}$")
 				digits := regex.FindString(value)
 				num, err := strconv.Atoi(digits)
 				if !(err == nil && num >= 2010 && num <= 2020) {
@@ -74,7 +74,7 @@ func answer2(inputStr string) int {
 					break
 				}
 			case "eyr":
-				regex := regexp.MustCompile("\\d{4}")
+				regex := regexp.MustCompile("^\\d{4}$")
 				digits := regex.FindString(value)
 				num, err := strconv.Atoi(digits)
 				if !(err == nil && num >= 2020 && num <= 2030) {
@@ -82,7 +82,7 @@ func answer2(inputStr string) int {
 					break
 				}
 			case "hgt":
-				regex := regexp.MustCompile("(\\d+)(cm|in)")
+				regex := regexp.MustCompile("^(\\d+)(cm|in)$")
 				hair := regex.FindStringSubmatch(value)
 				if len(hair) != 0 {
 					cmin := hair[2]
@@ -105,7 +105,7 @@ func answer2(inputStr string) int {
 			case "ecl":
 				regex := regexp.MustCompile("amb|blu|brn|gry|grn|hzl|oth")
 				ecl := regex.FindString(value)
-				if ecl == "" {
+				if len(ecl) != len(value) {
 					isValid = false
 					break
 				}
