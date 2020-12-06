@@ -17,7 +17,7 @@ func contains(s []string, e string) bool {
 	return false
 }
 func getInput(inputStr string) []string {
-	return strings.Split(inputStr, "\r\n\r\n") // windows \r\n\r\n linux \n\n
+	return strings.Split(inputStr, "\n\n") // windows \r\n\r\n linux \n\n
 }
 
 func getPassportParams(str string) []string {
@@ -54,68 +54,65 @@ func answer2(inputStr string) int {
 		passport := getPassportParams(v)
 		hasCID := false
 		isValid := true
-		keys := []string{}
 		for _, e := range passport {
 			key, value := e[:3], e[4:]
-			if !contains(keys, key) {
-				keys = append(keys, key)
-			}
 			switch key {
 			case "byr":
-				num, _ := strconv.Atoi(value)
-				if !(num >= 1920 && num <= 2002) && len(value) == 4 {
+				regex := regexp.MustCompile("\\d{4}")
+				digits := regex.FindString(value)
+				num, err := strconv.Atoi(digits)
+				if !(err == nil && num >= 1920 && num <= 2002) {
 					isValid = false
 					break
 				}
 			case "iyr":
-				num, _ := strconv.Atoi(value)
-				if !(num >= 2010 && num <= 2020) && len(value) == 4 {
+				regex := regexp.MustCompile("\\d{4}")
+				digits := regex.FindString(value)
+				num, err := strconv.Atoi(digits)
+				if !(err == nil && num >= 2010 && num <= 2020) {
 					isValid = false
 					break
 				}
 			case "eyr":
-				num, _ := strconv.Atoi(value)
-				if !(num >= 2020 && num <= 2030) && len(value) == 4 {
+				regex := regexp.MustCompile("\\d{4}")
+				digits := regex.FindString(value)
+				num, err := strconv.Atoi(digits)
+				if !(err == nil && num >= 2020 && num <= 2030) {
 					isValid = false
 					break
 				}
 			case "hgt":
-				unit := e[len(e)-2:]
-				if unit == "cm" || unit == "in" {
-					num, err := strconv.Atoi(e[4 : len(e)-2])
-					if err != nil {
+				regex := regexp.MustCompile("(\\d+)(cm|in)")
+				hair := regex.FindStringSubmatch(value)
+				if len(hair) != 0 {
+					cmin := hair[2]
+					num, _ := strconv.Atoi(hair[1])
+					if !((cmin == "cm" && num >= 150 && num <= 193) || (cmin == "in" && num >= 59 && num <= 76)) {
 						isValid = false
 						break
-					} else {
-						if unit == "cm" && !(num >= 150 && num <= 193) {
-							isValid = false
-							break
-						} else if unit == "in" && !(num >= 59 && num <= 76) {
-							isValid = false
-							break
-						}
 					}
 				} else {
 					isValid = false
 					break
 				}
 			case "hcl":
-				regex := regexp.MustCompile("#[0-9,a-f]+")
+				regex := regexp.MustCompile("^#[0-9a-f]{6}$")
 				hex := regex.FindString(value)
-				if hex == "" || len(hex) != 7 {
+				if hex == "" {
 					isValid = false
 					break
 				}
 			case "ecl":
-				switch value {
-				case "amb", "blu", "brn", "gry", "grn", "hzl", "oth":
-				default:
+				regex := regexp.MustCompile("amb|blu|brn|gry|grn|hzl|oth")
+				ecl := regex.FindString(value)
+				if ecl == "" {
 					isValid = false
 					break
 				}
 			case "pid":
-				_, err := strconv.Atoi(value)
-				if len(value) != 9 && err != nil {
+				regex := regexp.MustCompile("^\\d{9}$")
+				digits := regex.FindString(value)
+				if digits == "" {
 					isValid = false
 					break
 				}
@@ -126,10 +123,10 @@ func answer2(inputStr string) int {
 		}
 		if isValid {
 			if hasCID {
-				if len(keys) == 8 {
+				if len(passport) == 8 {
 					valids++
 				}
-			} else if len(keys) == 7 {
+			} else if len(passport) == 7 {
 				valids++
 			}
 		}
