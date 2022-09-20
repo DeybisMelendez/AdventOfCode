@@ -14,7 +14,7 @@ func part1(input string) int {
 		var test string = input + fmt.Sprint(value)
 		hash := md5.Sum([]byte(test))
 		hex := hex.EncodeToString(hash[:])
-		if string(hex[:5]) == "00000" {
+		if hex[:5] == "00000" {
 			return value
 		}
 		value++
@@ -27,7 +27,7 @@ func part2(input string) int {
 		var test string = input + fmt.Sprint(value)
 		hash := md5.Sum([]byte(test))
 		hex := hex.EncodeToString(hash[:])
-		if string(hex[:6]) == "000000" {
+		if hex[:6] == "000000" {
 			return value
 		}
 		value++
