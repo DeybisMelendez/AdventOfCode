@@ -13,8 +13,6 @@ const TURN_OFF uint8 = 1
 const TOGGLE uint8 = 2
 
 var line *regexp.Regexp = regexp.MustCompile("\n+")
-
-// var spaces *regexp.Regexp = regexp.MustCompile("%s+")
 var commas *regexp.Regexp = regexp.MustCompile(",+")
 var grid [1000][1000]bool
 var grid2 [1000][1000]int
@@ -75,7 +73,7 @@ func countLights2() int {
 	return total
 }
 
-func part1(input string) int {
+func answer(input string, config func(c uint8, xO int, yO int, xT int, yT int), count func() int) int {
 	var lines []string = line.Split(input, -1)
 	for _, command := range lines {
 		var commands []string = strings.Fields(command)
@@ -87,9 +85,9 @@ func part1(input string) int {
 			xTarget, _ := strconv.Atoi(coordsTarget[0])
 			yTarget, _ := strconv.Atoi(coordsTarget[1])
 			if commands[1] == "on" {
-				lightConfig(TURN_ON, xOrigin, yOrigin, xTarget, yTarget)
+				config(TURN_ON, xOrigin, yOrigin, xTarget, yTarget)
 			} else if commands[1] == "off" {
-				lightConfig(TURN_OFF, xOrigin, yOrigin, xTarget, yTarget)
+				config(TURN_OFF, xOrigin, yOrigin, xTarget, yTarget)
 			}
 		} else if commands[0] == "toggle" {
 			var coordsOrigin []string = commas.Split(commands[1], -1)
@@ -98,41 +96,18 @@ func part1(input string) int {
 			var coordsTarget []string = commas.Split(commands[3], -1)
 			xTarget, _ := strconv.Atoi(coordsTarget[0])
 			yTarget, _ := strconv.Atoi(coordsTarget[1])
-			lightConfig(TOGGLE, xOrigin, yOrigin, xTarget, yTarget)
+			config(TOGGLE, xOrigin, yOrigin, xTarget, yTarget)
 		}
 	}
-	return countLights()
+	return count()
+}
+func part1(input string) int {
+	return answer(input, lightConfig, countLights)
 }
 
 func part2(input string) int {
-	var lines []string = line.Split(input, -1)
-	for _, command := range lines {
-		var commands []string = strings.Fields(command)
-		if commands[0] == "turn" {
-			var coordsOrigin []string = commas.Split(commands[2], -1)
-			xOrigin, _ := strconv.Atoi(coordsOrigin[0])
-			yOrigin, _ := strconv.Atoi(coordsOrigin[1])
-			var coordsTarget []string = commas.Split(commands[4], -1)
-			xTarget, _ := strconv.Atoi(coordsTarget[0])
-			yTarget, _ := strconv.Atoi(coordsTarget[1])
-			if commands[1] == "on" {
-				lightConfig2(TURN_ON, xOrigin, yOrigin, xTarget, yTarget)
-			} else if commands[1] == "off" {
-				lightConfig2(TURN_OFF, xOrigin, yOrigin, xTarget, yTarget)
-			}
-		} else if commands[0] == "toggle" {
-			var coordsOrigin []string = commas.Split(commands[1], -1)
-			xOrigin, _ := strconv.Atoi(coordsOrigin[0])
-			yOrigin, _ := strconv.Atoi(coordsOrigin[1])
-			var coordsTarget []string = commas.Split(commands[3], -1)
-			xTarget, _ := strconv.Atoi(coordsTarget[0])
-			yTarget, _ := strconv.Atoi(coordsTarget[1])
-			lightConfig2(TOGGLE, xOrigin, yOrigin, xTarget, yTarget)
-		}
-	}
-	return countLights2()
+	return answer(input, lightConfig2, countLights2)
 }
-
 func main() {
 	INPUT, err := os.ReadFile("day06.input")
 	if err != nil {
