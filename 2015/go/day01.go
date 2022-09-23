@@ -6,9 +6,11 @@ const INPUT string = "()()(()()()(()()((()((()))((()((((()()((((()))()((((())(((
 
 const UP rune = rune('(')
 
-func part1(input string) int {
-	var total int = 0
-	for _, char := range input {
+var total int = 0
+
+func part1() int {
+	total = 0
+	for _, char := range INPUT {
 		if char == UP {
 			total++
 		} else {
@@ -18,9 +20,9 @@ func part1(input string) int {
 	return total
 }
 
-func part2(input string) int {
-	var total int = 0
-	for i, char := range input {
+func part2() int {
+	total = 0
+	for i, char := range INPUT {
 		if char == UP {
 			total++
 		} else {
@@ -33,6 +35,5 @@ func part2(input string) int {
 	return 0
 }
 func main() {
-	fmt.Println(part1(INPUT))
-	fmt.Println(part2(INPUT))
+	fmt.Println(part1(), part2())
 }
