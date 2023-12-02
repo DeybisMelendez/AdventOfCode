@@ -1,5 +1,4 @@
 require "utils" -- utils.lua
-local lineDelimiter = "[^\n]+"
 
 local numbers = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
 

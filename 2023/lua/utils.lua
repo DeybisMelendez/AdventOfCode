@@ -1,3 +1,10 @@
+lineDelimiter = "[^\n]+" -- Delimitador de lineas
+commaDelimiter = "[^,]+" -- Delimitador de comas
+spaceDelimiter = "[^%s]+" -- Delimitador de espacios
+semiColonDelimiter = "[^;]+" -- Delimitador de punto y coma
+colonDelimiter = "[^:]+"
+
+matchNumber = "%d+" -- devuelve un numero de un string con match
 -- readFile permite leer un archivo externo
 function readFile(file)
     local file = io.open(file, "r")
@@ -7,7 +14,7 @@ function readFile(file)
 end
 
 -- split permite dividir un texto en un array con un delimitador
-function splitString(str, del) --String, Delimiter
+function splitString(str, del) -- String, Delimiter
     local t = {}
     for value in str:gmatch(del) do
         table.insert(t, value)
