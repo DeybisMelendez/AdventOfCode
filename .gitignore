@@ -1,5 +1,6 @@
 # no incluir inputs link: https://www.reddit.com/r/adventofcode/wiki/faqs/copyright/inputs/
 *.txt
+*.input
 # Compiled Lua sources
 luac.out
 
