@@ -57,7 +57,7 @@ local function answer2()
     local winners = {}
     local card = ""
     local points = 0
-    local total = 0
+
     for _, line in ipairs(lines) do
         line = line:gsub("|", ":")
         parts = splitString(line, colonDelimiter) -- 3 partes: parte 1: Card, parte 2: Numeros, parte 3: Numeros ganadores
@@ -72,10 +72,12 @@ local function answer2()
         end
         table.insert(scratchcards, points) -- Casualmente Lua indexa desde 1
     end
+
     for card = 1, #scratchcards do
         getTotalScratchcards(card)
         totalScratchcards = totalScratchcards + 1
     end
+
     return totalScratchcards
 end
 
