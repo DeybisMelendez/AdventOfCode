@@ -21,3 +21,12 @@ function splitString(str, del) -- String, Delimiter
     end
     return t
 end
+-- contains verifica si una tabla contiene un elemento
+function contains(table, element)
+    for _, value in pairs(table) do
+        if value == element then
+            return true
+        end
+    end
+    return false
+end
