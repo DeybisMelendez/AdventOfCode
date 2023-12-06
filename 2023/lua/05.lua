@@ -8,7 +8,6 @@ local function getLocation(seed)
     for _, step in ipairs(steps) do
         for _, list in ipairs(maps[step]) do
             if seed >= list.source and seed < list.source + list.range then
-                -- print(step, seed, seed - list.source + list.destination)
                 seed = seed - list.source + list.destination
                 break
             end
@@ -50,12 +49,7 @@ local function answer1()
     end
     return bestLocation
 end
--- 2768526595 esto es muy alto
--- 401658854 esto es muy alto
--- 401662100 esto es muy alto
--- 401658582 esta no es pero debo estar cerca
--- 23846357 esta no es correcta
--- 20191103 no es correcta
+
 local function answer2()
     local bestLocation = 999999999999 -- el numero mas alto posible?
     local location = 0
@@ -84,7 +78,6 @@ local function answer2()
             else
                 location = getLocation(actualSeed)
                 if bestLocation > location then
-                    -- print(location, bestLocation, interval, leftInterval, rightInterval)
                     bestLocation = location
                     leftInterval = actualSeed - interval
                     rightInterval = actualSeed
@@ -93,7 +86,6 @@ local function answer2()
             end
 
         end
-        -- print(seeds[i], "------------------------")
         i = i + 2
     end
     return bestLocation
