@@ -6,9 +6,9 @@ require "utils"
 
 local fiveOfAKind = 70000000000
 local poker = 60000000000
-local fullHouse = 50000000000 -- 156 combinaciones posibles de fullHouse
+local fullHouse = 50000000000
 local threOfAKind = 40000000000
-local twoPair = 30000000000 -- 156 combinaciones posibles de dos pares
+local twoPair = 30000000000
 local pair = 20000000000
 local highCard = 10000000000
 local tiebreaker = {100000000, -- Desempate, Cada carta se multiplica por este valor
@@ -123,14 +123,14 @@ local function getInput(part)
         table.insert(hands, {
             hand = line[1],
             bid = line[2],
-            strength = getStrength(line[1], part) -- En base a la puntuación se puede ordenar, el rango sería el index
+            strength = getStrength(line[1], part)
         })
     end
     return hands
 end
 
 local function getTotal(hands)
-    local bestI = 1 -- en Lua se itera desde 1, no 0
+    local bestI = 1
     local minStrength = 99999999999999999
     local rank = 1
     local total = 0
