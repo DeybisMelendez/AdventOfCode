@@ -44,21 +44,20 @@ local function answer2()
     local count = 0
     local index = 1
     local nodes = {}
-    local isNodeCorrect = false
+    local isNodeFinished = false
     local solution = 1
     for node, _ in pairs(map) do
         if string.sub(node, LAST_CHAR, LAST_CHAR) == "A" then
             table.insert(nodes, node)
         end
     end
-    for i, node in ipairs(nodes) do
-        isNodeCorrect = false
+    for _, node in ipairs(nodes) do
+        isNodeFinished = false
         count = 0
-        while not isNodeCorrect do
-            isNodeCorrect = true
+        while not isNodeFinished do
             node = map[node][dir[string.sub(map.ins, index, index)]]
-            if string.sub(node, LAST_CHAR, LAST_CHAR) ~= "Z" then
-                isNodeCorrect = false
+            if string.sub(node, LAST_CHAR, LAST_CHAR) == "Z" then
+                isNodeFinished = true
             end
             index = index + 1
             if index > #map.ins then
