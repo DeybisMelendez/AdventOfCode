@@ -30,3 +30,15 @@ function contains(table, element)
     end
     return false
 end
+-- Función para calcular el máximo común divisor (MCD)
+function GCD(a, b)
+    while b ~= 0 do
+        a, b = b, a % b
+    end
+    return a
+end
+
+-- Función para calcular el mínimo común múltiplo (mcm)
+function LCM(a, b)
+    return (a * b) // GCD(a, b)
+end
