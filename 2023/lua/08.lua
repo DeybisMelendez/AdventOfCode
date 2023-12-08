@@ -1,6 +1,6 @@
 require "utils"
 
-local dir = {
+local dir<const> = {
     R = 2,
     L = 1
 }
