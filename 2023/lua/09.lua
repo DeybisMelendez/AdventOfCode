@@ -15,15 +15,15 @@ local function getInput()
     return list
 end
 
-local function isSequenceStable(history)
-    local isStable = true
+local function isSequenceArithmetic(history)
+    local isArithmetic = true
     for i = #history, 3, -1 do
         if history[i] - history[i - 1] ~= history[i - 1] - history[i - 2] then
-            isStable = false
+            isArithmetic = false
             break
         end
     end
-    return isStable
+    return isArithmetic
 end
 
 local function answer1(input)
@@ -34,7 +34,7 @@ local function answer1(input)
     for _, history in ipairs(input) do
         lastNumberSequences = {history[#history]}
         lastDiffSequences = history[#history] - history[#history - 1]
-        while not isSequenceStable(history) do
+        while not isSequenceArithmetic(history) do
             newHistory = {}
             for i = 1, #history - 1 do
                 table.insert(newHistory, history[i + 1] - history[i])
