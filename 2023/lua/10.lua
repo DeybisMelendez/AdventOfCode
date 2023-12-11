@@ -155,8 +155,6 @@ local function answer2()
     local dir = initialDirs[1]
     local maxX, maxY = #map[1], #map
     local actualPipe = ""
-    local steps = 1 -- contando la posición inicial
-    local maxSteps = 1
     local isInside = false
     local insideCount = 0
     for i = 1, maxY do
