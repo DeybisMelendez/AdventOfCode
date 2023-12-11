@@ -3,6 +3,7 @@ commaDelimiter = "[^,]+" -- Delimitador de comas
 spaceDelimiter = "[^%s]+" -- Delimitador de espacios
 semiColonDelimiter = "[^;]+" -- Delimitador de punto y coma
 colonDelimiter = "[^:]+"
+charDelimiter = "."
 
 matchNumber = "%d+" -- devuelve un numero de un string con match
 -- readFile permite leer un archivo externo
