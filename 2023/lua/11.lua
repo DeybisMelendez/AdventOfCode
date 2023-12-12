@@ -48,7 +48,7 @@ local function isVisited(visited, pos)
     return false
 end
 
-local function getPath(map, from, to)
+local function getPath(from, to)
     local path = {}
     local visited = {}
     local x, y = from.x, from.y
@@ -101,10 +101,10 @@ local function getPath(map, from, to)
 end
 
 local function answer1(expand)
-    local map = getInput()
+    local input = getInput()
     local galaxies = {}
     local totalPath = 0
-    for y, rank in ipairs(map) do
+    for y, rank in ipairs(input) do
         for x, item in ipairs(rank) do
             if item == "#" then
                 table.insert(galaxies, {
@@ -116,10 +116,10 @@ local function answer1(expand)
     end
     while #galaxies > 1 do
         for i = 2, #galaxies do
-            local path = getPath(galaxies, galaxies[1], galaxies[i])
+            local path = getPath(galaxies[1], galaxies[i])
             for _, val in ipairs(path) do
                 totalPath = totalPath + 1
-                if contains(map.fileExpanded, val.x) or contains(map.rankExpanded, val.y) then
+                if contains(input.fileExpanded, val.x) or contains(input.rankExpanded, val.y) then
                     totalPath = totalPath + expand
                 end
             end
@@ -128,5 +128,6 @@ local function answer1(expand)
     end
     return totalPath
 end
+-- 40 seconds
 print("Parte 1:", answer1(1))
 print("Parte 2:", answer1(999999))
