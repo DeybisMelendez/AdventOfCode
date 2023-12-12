@@ -3,6 +3,7 @@ commaDelimiter = "[^,]+" -- Delimitador de comas
 spaceDelimiter = "[^%s]+" -- Delimitador de espacios
 semiColonDelimiter = "[^;]+" -- Delimitador de punto y coma
 colonDelimiter = "[^:]+"
+dotDelimiter = "[^.]+"
 charDelimiter = "."
 
 matchNumber = "%d+" -- devuelve un numero de un string con match
@@ -12,6 +13,10 @@ function readFile(file)
     local input = file:read("*a")
     file:close()
     return input
+end
+
+function replaceChar(str, char, index)
+    return str:sub(1, index - 1) .. char .. str:sub(index + 1)
 end
 
 -- split permite dividir un texto en un array con un delimitador
