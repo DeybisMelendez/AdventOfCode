@@ -1,6 +1,6 @@
 require "utils"
 
-local numbers = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
+local numbers<const> = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
 
 local function getInput()
     local input = readFile("01input.txt")
@@ -35,10 +35,6 @@ local function foundCalibrationValue(line, readWords)
             lastDigit = char
             break
         end
-    end
-
-    if tonumber(firstDigit .. lastDigit) == nil then
-        return 0
     end
 
     return tonumber(firstDigit .. lastDigit)
