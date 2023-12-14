@@ -1,8 +1,12 @@
-require "utils" -- utils.lua
+require "utils"
 
 local numbers = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
 
--- Encuentra el valor de calibracion de una linea
+local function getInput()
+    local input = readFile("01input.txt")
+    return splitString(input, lineDelimiter)
+end
+
 local function foundCalibrationValue(line, readWords)
     local firstDigit = ""
     local lastDigit = ""
@@ -16,6 +20,7 @@ local function foundCalibrationValue(line, readWords)
             end
         end
     end
+
     for i = 1, #line do
         local char = line:sub(i, i)
         if tonumber(char) ~= nil then
@@ -23,6 +28,7 @@ local function foundCalibrationValue(line, readWords)
             break
         end
     end
+
     for i = #line, 1, -1 do
         local char = line:sub(i, i)
         if tonumber(char) ~= nil then
@@ -30,16 +36,16 @@ local function foundCalibrationValue(line, readWords)
             break
         end
     end
+
     if tonumber(firstDigit .. lastDigit) == nil then
         return 0
     end
+
     return tonumber(firstDigit .. lastDigit)
 end
 
--- answer1 devuelve la respuesta de la parte 1
 local function answer1()
-    local input = readFile("01input.txt")
-    local lines = splitString(input, lineDelimiter)
+    local lines = getInput()
     local result = 0
     for _, line in ipairs(lines) do
         result = result + foundCalibrationValue(line, false)
@@ -47,10 +53,8 @@ local function answer1()
     return result
 end
 
--- answer2 devuelve la respuesta de la parte 2
 local function answer2()
-    local input = readFile("01input.txt")
-    local lines = splitString(input, lineDelimiter)
+    local lines = getInput()
     local result = 0
     for _, line in ipairs(lines) do
         result = result + foundCalibrationValue(line, true)
