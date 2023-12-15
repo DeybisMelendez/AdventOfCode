@@ -1,15 +1,19 @@
-require "utils" -- utils.lua
+require "utils"
+local maxCubeColors<const> = {
+    blue = 14,
+    green = 13,
+    red = 12
+}
+
+local function getInput()
+    local input = readFile("02input.txt")
+    return splitString(input, lineDelimiter)
+end
 
 local function answer1()
-    local maxCubeColors = {
-        blue = 14,
-        green = 13,
-        red = 12
-    }
-    local input = readFile("02input.txt")
-    local lines = splitString(input, lineDelimiter)
+    local lines = getInput()
     local game = ""
-    local gameNumber = 0
+    local gameID = 0
     local sets = {}
     local cubes = {}
     local cube = {}
@@ -19,14 +23,15 @@ local function answer1()
     local result = 0
 
     for _, line in ipairs(lines) do
-        game = splitString(line, colonDelimiter)
-        gameNumber = tonumber(string.sub(game[1], 5, -1))
-        sets = splitString(game[2], semiColonDelimiter)
+        game = splitString(line, colonDelimiter) -- Divide el string por ;
+        gameID = tonumber(string.sub(game[1], 5, -1)) -- Extrae el ID del juego
+        sets = splitString(game[2], semiColonDelimiter) -- Divide el juego en subconjuntos
+
         for _, set in ipairs(sets) do
             isSetVerified = true
             cubes = splitString(set, commaDelimiter)
             for _, cubeCount in ipairs(cubes) do
-                cube = splitString(cubeCount, spaceDelimiter)
+                cube = splitString(cubeCount, spaceDelimiter) -- dividimos el string por "%s" (caracter espacio)
                 cubeNumber = tonumber(cube[1])
                 cubeColor = cube[2]
                 if cubeNumber > maxCubeColors[cubeColor] then
@@ -39,7 +44,7 @@ local function answer1()
             end
         end
         if isSetVerified then
-            result = result + gameNumber
+            result = result + gameID
         end
     end
     return result
