@@ -51,8 +51,7 @@ local function answer1()
 end
 
 local function answer2()
-    local input = readFile("02input.txt")
-    local lines = splitString(input, lineDelimiter)
+    local lines = getInput()
     local game = ""
     local sets = {}
     local cubes = {}
