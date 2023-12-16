@@ -1,40 +1,68 @@
 require "utils"
 
-local totalScratchcards = 0
-local scratchcards = {}
-
 local function isWinner(number, winners)
-    for _, value in pairs(winners) do
-        if tonumber(value) == tonumber(number) then
+    for _, winner in ipairs(winners) do
+        if number == winner then
             return true
         end
     end
     return false
 end
 
-local function getTotalScratchcards(index)
-    for i = 1, scratchcards[index] do
-        getTotalScratchcards(index + i)
-        totalScratchcards = totalScratchcards + 1
+local function getTotalScratchcards(index, cards)
+    local total = 0
+
+    if cards[index].total ~= -1 then
+        return cards[index].total
     end
+
+    for i = cards[index].points, 1, -1 do
+        total = total + getTotalScratchcards(index + i, cards) + 1
+    end
+
+    cards[index].total = total
+    return total
 end
 
-local function answer1()
+local function getInput()
     local input = readFile("04input.txt")
     local lines = splitString(input, lineDelimiter)
     local parts = {}
+    local games = {}
     local numbers = {}
     local winners = {}
-    local points = 0
-    local total = 0
-    for _, line in ipairs(lines) do
-        line = line:gsub("|", ":")
+
+    for i, line in ipairs(lines) do
+        line = line:gsub("|", ":") -- cambiar | por : para dividir el juego en 3 partes
         parts = splitString(line, colonDelimiter) -- 3 partes: parte 1: Card, parte 2: Numeros, parte 3: Numeros ganadores
         numbers = splitString(parts[2], spaceDelimiter)
         winners = splitString(parts[3], spaceDelimiter)
+        games[i] = {
+            numbers = {},
+            winners = {}
+        }
+
+        for j = 1, #numbers do
+            table.insert(games[i].numbers, tonumber(numbers[j]))
+        end
+
+        for j = 1, #winners do
+            table.insert(games[i].winners, tonumber(winners[j]))
+        end
+    end
+    return games
+end
+
+local function answer1()
+    local games = getInput()
+    local points = 0
+    local total = 0
+
+    for _, game in ipairs(games) do
         points = 0
-        for _, number in ipairs(numbers) do
-            if isWinner(number, winners) then
+
+        for _, number in ipairs(game.numbers) do
+            if isWinner(number, game.winners) then
                 if points == 0 then
                     points = 1
                 else
@@ -42,40 +70,36 @@ local function answer1()
                 end
             end
         end
+
         total = total + points
     end
     return total
 end
 
 local function answer2()
-    scratchcards = {}
-    totalScratchcards = 0
-    local input = readFile("04input.txt")
-    local lines = splitString(input, lineDelimiter)
-    local parts = {}
-    local numbers = {}
-    local winners = {}
-    local card = ""
+    local scratchcards = {}
+    local totalScratchcards = 0
+    local games = getInput()
     local points = 0
+    local total = 0
 
-    for _, line in ipairs(lines) do
-        line = line:gsub("|", ":")
-        parts = splitString(line, colonDelimiter) -- 3 partes: parte 1: Card, parte 2: Numeros, parte 3: Numeros ganadores
-        card = tonumber(parts[1]:sub(5, -1))
-        numbers = splitString(parts[2], spaceDelimiter)
-        winners = splitString(parts[3], spaceDelimiter)
+    for _, game in ipairs(games) do
         points = 0
-        for _, number in ipairs(numbers) do
-            if isWinner(number, winners) then
+
+        for _, number in ipairs(game.numbers) do
+            if isWinner(number, game.winners) then
                 points = points + 1
             end
         end
-        table.insert(scratchcards, points) -- Casualmente Lua indexa desde 1
+
+        table.insert(scratchcards, {
+            points = points,
+            total = -1
+        }) -- Casualmente Lua indexa desde 1
     end
 
-    for card = 1, #scratchcards do
-        getTotalScratchcards(card)
-        totalScratchcards = totalScratchcards + 1
+    for i = #scratchcards, 1, -1 do
+        totalScratchcards = totalScratchcards + getTotalScratchcards(i, scratchcards) + 1
     end
 
     return totalScratchcards

@@ -89,6 +89,24 @@ local function answer2()
                 end
             end
         end
+        --[[ -- Animación
+        os.execute("clear")
+        print("Current: " .. str)
+        for i = 0, 255, 8 do
+            for j = 0, 7 do
+                local lens = ""
+                if #boxes[i + j] == 0 then
+                    lens = "     "
+                end
+                for i = 1, #boxes[i + j] do
+                    lens = lens .. "("
+                end
+
+                io.write("Box " .. i + j .. ": " .. lens .. "\t")
+            end
+            io.write("\n")
+        end
+        os.execute("sleep 0.01")--]]
     end
     for i = 0, #boxes do
         if #boxes[i] > 0 then
