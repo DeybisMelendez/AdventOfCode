@@ -10,17 +10,20 @@ local function isWinner(number, winners)
 end
 
 local function getTotalScratchcards(index, cards)
-    local total = 0
 
+    -- si el total ya fue calculado se devuelve directamente
     if cards[index].total ~= -1 then
         return cards[index].total
     end
+    -- en caso contrario se calcula
+    local total = 0
 
     for i = cards[index].points, 1, -1 do
         total = total + getTotalScratchcards(index + i, cards) + 1
     end
-
+    -- se guarda el total calculado
     cards[index].total = total
+
     return total
 end
 
