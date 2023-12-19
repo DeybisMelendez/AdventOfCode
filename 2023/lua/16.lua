@@ -206,4 +206,4 @@ local function answer2()
 end
 
 print("Parte 1:", answer1())
--- print("Parte 2:", answer2())
+print("Parte 2:", answer2())
