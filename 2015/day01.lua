@@ -1,8 +1,8 @@
-local file = io.open("day01input.txt", "r")
-local input = file:read("*a")
-file:close()
+require "utils"
 
-local function answer1()
+local input = utils.readFile("day01input.txt")
+
+local function answer1(input)
 	local result = 0
 	for char in input:gmatch(".") do
 		if char == "(" then
@@ -14,7 +14,7 @@ local function answer1()
 	return result
 end
 
-local function answer2()
+local function answer2(input)
 	local floor = 0
 	local result = 0
 	for char in input:gmatch(".") do
@@ -30,5 +30,5 @@ local function answer2()
 	end
 end
 
-print("answer 1 is", answer1())
-print("answer 2 is", answer2())
+print("answer 1 is", answer1(input))
+print("answer 2 is", answer2(input))

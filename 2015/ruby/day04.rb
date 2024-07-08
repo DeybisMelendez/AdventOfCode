@@ -1,5 +1,0 @@
-input = "ckczppom"
-
-
-
-def 

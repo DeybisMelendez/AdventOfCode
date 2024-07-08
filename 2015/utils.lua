@@ -1,3 +1,17 @@
+utils = {}
+function utils.readFile(file)
+    local file = io.open(file, "r")
+    local text = file:read("*a")
+    file:close()
+    return text
+end
+function utils.split(str, del) --String, Delimiter
+    local t = {}
+    for value in str:gmatch(del) do
+        table.insert(t, value)
+    end
+    return t
+end
 -- String functions
 function string.split(str, del) --String, Delimiter
     local t = {}
