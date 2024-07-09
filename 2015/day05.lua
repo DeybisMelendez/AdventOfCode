@@ -1,23 +1,13 @@
-local file = io.open("day04input.txt", "r")
-local text = file:read("*a")
-file:close()
+require "utils"
 
-local function split(str, del) --String, Delimiter
-    local t = {}
-    for value in str:gmatch(del) do
-        table.insert(t, value)
-    end
-    return t
-end
+local input = utils.split(utils.readFile("day05input.txt"),"[^\n]+")
 
-local lines = split(text, "[^\n]+")
-
-local function answer1()
+local function answer1(input)
     local niceString = 0
     local vocals = {"a", "e", "i", "o", "u"}
     local notChars = {"ab", "cd", "pq", "xy"}
-    for i=1, #lines do
-        local str = lines[i]
+    for i=1, #input do
+        local str = input[i]
         local vocalCount = 0
         local twice = false
         local contains = false
@@ -47,8 +37,8 @@ end
 
 local function answer2()
     local niceString = 0
-    for i=1, #lines do
-        local str = lines[i]
+    for i=1, #input do
+        local str = input[i]
         local rep = false
         local bet = false
         for c=1, 15 do
@@ -73,5 +63,5 @@ local function answer2()
     return niceString
 end
 
-print(answer1())
-print(answer2())
+print("the answer 1 is", answer1(input))
+print("the answer 2 is", answer2(input))
