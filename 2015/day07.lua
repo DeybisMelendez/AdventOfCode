@@ -1,17 +1,8 @@
-local file = io.open("day07input.txt", "r")
-local text = file:read("*a")
-file:close()
+require "utils"
 
-local function split(str, del) --String, Delimiter
-    local t = {}
-    for value in str:gmatch(del) do
-        table.insert(t, value)
-    end
-    return t
-end
-local instructions = split(text, "[^\n]+")
+local input = utils.split(utils.readFile("day07input.txt"),"[^\n]+")
+
 local wires = {}
-local wires2 = {}
 local result = {}
 
 local function calc(name)
@@ -48,19 +39,21 @@ local function calc(name)
 end
 
 local function answer1(x)
-    for i=1, #instructions do
-        local ins = instructions[i]
-        ins = split(ins, "[^->]+")
+    for i=1, #input do
+        local ins = input[i]
+        ins = utils.split(ins, "[^->]+")
         ins[2] = string.gsub(ins[2], "%s","")
-        wires[ins[2]] = split(ins[1], "[^%s]+")
+        wires[ins[2]] = utils.split(ins[1], "[^%s]+")
     end
     return calc(x)
 end
+
 local function answer2(x)
     local b = result["a"]
     result = {}
     result["b"] = b
     return calc(x)
 end
+
 print(answer1("a"))
 print(answer2("a"))
