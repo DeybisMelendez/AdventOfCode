@@ -2,7 +2,7 @@ require "utils"
 
 local input = utils.split(utils.readFile("day05input.txt"),"[^\n]+")
 
-local function answer1(input)
+local function answer1()
     local niceString = 0
     local vocals = {"a", "e", "i", "o", "u"}
     local notChars = {"ab", "cd", "pq", "xy"}
@@ -63,5 +63,5 @@ local function answer2()
     return niceString
 end
 
-print("the answer 1 is", answer1(input))
-print("the answer 2 is", answer2(input))
+print("the answer 1 is", answer1())
+print("the answer 2 is", answer2())

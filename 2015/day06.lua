@@ -1,20 +1,12 @@
-local file = io.open("day06input.txt", "r")
-local text = file:read("*a")
-file:close()
+require "utils"
+local input = utils.readFile("day06input.txt")
+input = string.gsub(input, "turn on", "turn_on")
+input = string.gsub(input, "turn off", "turn_off")
+input = string.gsub(input, "through ", "")
+input = string.gsub(input, ",", " ")
 
-local function split(str, del) --String, Delimiter
-    local t = {}
-    for value in str:gmatch(del) do
-        table.insert(t, value)
-    end
-    return t
-end
-text = string.gsub(text, "turn on", "turn_on")
-text = string.gsub(text, "turn off", "turn_off")
-text = string.gsub(text, "through ", "")
-text = string.gsub(text, ",", " ")
+input = utils.split(input, "[^\n]+")
 
-local instructions = split(text, "[^\n]+")
 local function answer1()
     local grid = {}
     for y=0, 999 do
@@ -23,9 +15,9 @@ local function answer1()
             grid[y][x] = 0
         end
     end
-    for i=1, #instructions do
-        local ins = instructions[i]
-        ins = split(ins, "[^%s]+")
+    for i=1, #input do
+        local ins = input[i]
+        ins = utils.split(ins, "[^%s]+")
         local y1, x1, y2, x2 = tonumber(ins[2]), tonumber(ins[3]), tonumber(ins[4]), tonumber(ins[5])
         if ins[1] == "turn_on" then
             for y=y1, y2 do
@@ -70,9 +62,9 @@ local function answer2()
             grid[y][x] = 0
         end
     end
-    for i=1, #instructions do
-        local ins = instructions[i]
-        ins = split(ins, "[^%s]+")
+    for i=1, #input do
+        local ins = input[i]
+        ins = utils.split(ins, "[^%s]+")
         local y1, x1, y2, x2 = tonumber(ins[2]), tonumber(ins[3]), tonumber(ins[4]), tonumber(ins[5])
         if ins[1] == "turn_on" then
             for y=y1, y2 do
@@ -105,5 +97,6 @@ local function answer2()
     end
     return count
 end
-print(answer1())
-print(answer2())
+
+print("the answer 1 is", answer1())
+print("the answer 2 is", answer2())
