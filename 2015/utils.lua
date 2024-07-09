@@ -1,10 +1,12 @@
 utils = {}
+
 function utils.readFile(file)
     local file = io.open(file, "r")
     local text = file:read("*a")
     file:close()
     return text
 end
+
 function utils.split(str, del) --String, Delimiter
     local t = {}
     for value in str:gmatch(del) do
@@ -12,6 +14,37 @@ function utils.split(str, del) --String, Delimiter
     end
     return t
 end
+
+function utils.copy(t)
+    local n = {}
+    for i, v in pairs(t) do
+        n[i] = v
+    end
+    return n
+end
+
+function utils:deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[self:deepcopy(orig_key)] = self:deepcopy(orig_value)
+        end
+        setmetatable(copy, self:deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
+function utils.concat(a,b)
+    for i=1, #b do
+        table.insert(b[i], a)
+    end
+    return b
+end
+
 -- String functions
 function string.split(str, del) --String, Delimiter
     local t = {}
@@ -71,13 +104,6 @@ function table.merge(t1,t2)
         table.insert(t1, v)
     end
     return t1
-end
-
-function table.concat(a,b)
-    for i=1, #b do
-        table.insert(b[i], a)
-    end
-    return b
 end
 
 function table.permute(t)
