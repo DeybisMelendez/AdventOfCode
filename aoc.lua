@@ -8,9 +8,10 @@ local aoc = {
 
 function aoc.debug.timeExecution(func, ...)
     local start = os.clock()
-    func(...)
+    local result = func(...)
     local finish = os.clock()
-    print("Execution time: " .. (finish - start) .. " seconds")
+    print("Execution time: " .. (finish - start) .. " seconds with output: ")
+    print(result)
 end
 
 function aoc.input.getInput(filename)
@@ -39,15 +40,15 @@ function aoc.string.iterate(str)
     local index = 1
     local len = #str
     return function()
-        if index + chars <= len then
+        if index <= len then
             local char = str:sub(index, index)
+            local currentIndex = index -- Guardar el índice actual antes de incrementarlo
             index = index + 1
-            return char
+            return currentIndex, char
         end
-        return nil -- Termina la iteración
+        return nil, nil -- Termina la iteración
     end
 end
-
 
 function aoc.list.contains(tbl, element)
     for _, v in ipairs(tbl) do
@@ -95,7 +96,7 @@ function aoc.list.filter(tbl, predicate)
 end
 
 function aoc.list.reduce(tbl, func, initial)
-    local accumulator = initial
+    local accumulator = initial or 0
     for _, v in ipairs(tbl) do
         accumulator = func(accumulator, v)
     end
