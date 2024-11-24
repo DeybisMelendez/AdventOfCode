@@ -1,0 +1,7 @@
+{
+    "Lua.diagnostics.libraryFiles": "Disable",
+    "Lua.diagnostics.disable": [
+        "deprecated",
+        "undefined-global"
+    ]
+}
