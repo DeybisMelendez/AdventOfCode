@@ -1,4 +1,4 @@
-local aoc = require "aoc"
+local aoc = require "lib.aoc"
 local input = aoc.string.split(aoc.input.getInput("input.txt"), "\n")
 
 local function answer1()

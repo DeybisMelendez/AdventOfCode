@@ -1,3 +1,6 @@
+-- Librería escrita por Deybis Melendez que contiene utilerías
+-- para realizar los puzzles de advent of code
+
 local aoc = {
     input = {},
     debug = {},

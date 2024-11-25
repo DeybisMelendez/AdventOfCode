@@ -1,14 +1,14 @@
-require "utils"
-local input = utils.readFile("day03input.txt")
+local aoc = require "lib.aoc"
+local input = aoc.input.getInput("input.txt")
 
-local function answer1(input)
+local function answer1()
 	local visits = {}
 	local santa = {x=0,y=0}
 	local totalVisits = 1
 	local key = santa.x .. "," .. santa.y
 	visits[key] = true
 
-	for char in input:gmatch(".") do
+	for _, char in aoc.string.iterate(input) do
 		if char == ">" then
 			santa.x = santa.x + 1
 		elseif char == "^" then
@@ -29,7 +29,7 @@ local function answer1(input)
 	return totalVisits
 end
 
-local function answer2(input)
+local function answer2()
 	local visits = {}
 	local santa = {x=0,y=0}
 	local roboSanta = {x=0,y=0}
@@ -38,7 +38,7 @@ local function answer2(input)
 	local turn = true
 	visits[key] = true
 
-	for char in input:gmatch(".") do
+	for _, char in aoc.string.iterate(input) do
 		local whoToMove = turn and santa or roboSanta
 
 		if char == ">" then
@@ -62,5 +62,5 @@ local function answer2(input)
 	end
 	return totalVisits
 end
-print("the answer 1 is", answer1(input))
-print("the answer 2 is", answer2(input))
+print("answer 1 is " .. answer1())
+print("answer 2 is " .. answer2())

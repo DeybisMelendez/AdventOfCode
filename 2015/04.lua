@@ -1,6 +1,4 @@
-require "utils"
-local hashLib = require "sha2"
-local hashTable = {}
+local hashLib = require "lib.sha2"
 
 local function answer1(input)
 	local num = 0
@@ -14,6 +12,7 @@ local function answer1(input)
 end
 
 local function answer2(input)
+	-- Es demasiado lento
 	local num = 0
 	while true do
 		local hash = hashLib.md5(input..num):sub(1,6)
