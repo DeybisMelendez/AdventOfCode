@@ -3,5 +3,6 @@
     "Lua.diagnostics.disable": [
         "deprecated",
         "undefined-global"
-    ]
+    ],
+    "editor.formatOnSave": true
 }

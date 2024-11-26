@@ -3,7 +3,7 @@ local input = aoc.input.getInput("input.txt")
 
 local function answer1()
 	local visits = {}
-	local santa = {x=0,y=0}
+	local santa = { x = 0, y = 0 }
 	local totalVisits = 1
 	local key = santa.x .. "," .. santa.y
 	visits[key] = true
@@ -31,8 +31,8 @@ end
 
 local function answer2()
 	local visits = {}
-	local santa = {x=0,y=0}
-	local roboSanta = {x=0,y=0}
+	local santa = { x = 0, y = 0 }
+	local roboSanta = { x = 0, y = 0 }
 	local totalVisits = 1
 	local key = santa.x .. "," .. santa.y
 	local turn = true
