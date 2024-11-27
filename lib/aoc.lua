@@ -55,6 +55,12 @@ function aoc.string.iterate(str)
     end
 end
 
+function aoc.list.indexOf(t, val)
+    for k, v in pairs(t) do
+        if v == val then return k end
+    end
+end
+
 function aoc.list.contains(tbl, element)
     for _, v in ipairs(tbl) do
         if v == element then
