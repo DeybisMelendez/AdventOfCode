@@ -6,6 +6,7 @@ local aoc = {
     debug = {},
     string = {},
     list = {},
+    dict = {},
     search = {},
 }
 
@@ -18,6 +19,7 @@ function aoc.debug.timeExecution(func, ...)
 end
 
 function aoc.input.getInput(filename)
+    filename = filename or "input.txt"
     local file = io.open(filename, "r")
     if file == nil then
         error("File not found: " .. filename)
@@ -113,6 +115,43 @@ function aoc.list.find(tbl, predicate)
         end
     end
     return nil, nil
+end
+
+function aoc.list.permute(t)
+    if #t == 0 then
+        return { {} }
+    end
+
+    local permuted = {}
+
+    for i = 1, #t do
+        -- Tomar el elemento actual
+        local current = t[i]
+
+        -- Crear una nueva lista sin el elemento actual
+        local remaining = {}
+        for j = 1, #t do
+            if j ~= i then
+                table.insert(remaining, t[j])
+            end
+        end
+
+        -- Generar permutaciones de la lista restante
+        for _, p in ipairs(aoc.list.permute(remaining)) do
+            -- Insertar el elemento actual al frente de cada permutación
+            table.insert(permuted, { current, unpack(p) })
+        end
+    end
+
+    return permuted
+end
+
+function aoc.dict.getKeys(t)
+    local keys = {}
+    for key, _ in pairs(t) do
+        table.insert(keys, key)
+    end
+    return keys
 end
 
 function aoc.search.bfs(start, goal, neighbors)

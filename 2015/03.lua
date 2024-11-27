@@ -1,5 +1,5 @@
 local aoc = require "lib.aoc"
-local input = aoc.input.getInput("input.txt")
+local input = aoc.input.getInput()
 
 local function answer1()
 	local visits = {}

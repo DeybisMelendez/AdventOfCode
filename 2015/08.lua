@@ -1,6 +1,6 @@
 local aoc = require "lib.aoc"
 
-local input = aoc.string.split(aoc.input.getInput("input.txt"), "\n")
+local input = aoc.string.split(aoc.input.getInput(), "\n")
 local totalCharsLit = 0
 local totalCharsMem = 0
 local totalNewlyEncodedChars = 0

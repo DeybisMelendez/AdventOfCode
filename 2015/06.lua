@@ -1,6 +1,6 @@
 local aoc = require "lib.aoc"
 
-local input = aoc.input.getInput("input.txt")
+local input = aoc.input.getInput()
 input = string.gsub(input, "turn on", "turn_on")
 input = string.gsub(input, "turn off", "turn_off")
 input = string.gsub(input, "through ", "")

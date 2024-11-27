@@ -1,5 +1,5 @@
 local aoc = require "lib.aoc"
-local input = aoc.string.split(aoc.input.getInput("input.txt"), "\n")
+local input = aoc.string.split(aoc.input.getInput(), "\n")
 
 local function answer1()
 	local result = 0

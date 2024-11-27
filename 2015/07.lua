@@ -1,7 +1,7 @@
 -- No funciona en Luajit
 local aoc = require "lib.aoc"
 
-local input = aoc.string.split(aoc.input.getInput("input.txt"), "\n")
+local input = aoc.string.split(aoc.input.getInput(), "\n")
 
 local wires = {}
 local result = {}
