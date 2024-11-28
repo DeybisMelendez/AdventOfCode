@@ -1,4 +1,6 @@
-local input = "1321131112"
+local aoc = require "lib.aoc"
+
+local input = aoc.input.getInput()
 local lookAndSayMemo = {}
 
 local function nextLookAndSay(term)

@@ -8,7 +8,7 @@ input = input:gsub("seconds, but then must rest for ", "")
 input = input:gsub(" seconds.", "")
 input = aoc.string.split(input, "\n")
 
-local function answer1(time)
+local function compete(time)
     local bestRaindeers = {}
     for _, line in ipairs(input) do
         line = aoc.string.split(line, "%s")
@@ -48,11 +48,15 @@ local function answer1(time)
     return bestRaindeers
 end
 
-local function answer2(time)
+local function answer1()
+    return compete(2503)[1].distance
+end
+
+local function answer2()
     local score = {}
     local bestScore = 0
-    for i = 1, time do
-        local bestRaindeers = answer1(i)
+    for i = 1, 2503 do
+        local bestRaindeers = compete(i)
         for _, bestRaindeer in ipairs(bestRaindeers) do
             if score[bestRaindeer.name] == nil then
                 score[bestRaindeer.name] = 1
@@ -71,5 +75,5 @@ local function answer2(time)
     return bestScore
 end
 
-print("answer 1 is " .. answer1(2503)[1].distance)
-print("answer 2 is " .. answer2(2503))
+print("answer 1 is " .. answer1())
+print("answer 2 is " .. answer2())

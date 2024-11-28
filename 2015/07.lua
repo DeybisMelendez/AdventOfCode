@@ -47,15 +47,15 @@ local function answer1(x)
         ins[2] = string.gsub(ins[2], "%s", "")
         wires[ins[2]] = aoc.string.split(ins[1], "%s")
     end
-    return calc(x)
+    return calc("a")
 end
 
 local function answer2(x)
     local b = result["a"]
     result = {}
     result["b"] = b
-    return calc(x)
+    return calc("a")
 end
 
-print("answer 1 is " .. answer1("a"))
-print("answer 2 is " .. answer2("a"))
+print("answer 1 is " .. answer1())
+print("answer 2 is " .. answer2())
