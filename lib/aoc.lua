@@ -131,20 +131,16 @@ function aoc.list.permute(t)
     local permuted = {}
 
     for i = 1, #t do
-        -- Tomar el elemento actual
         local current = t[i]
-
-        -- Crear una nueva lista sin el elemento actual
         local remaining = {}
+
         for j = 1, #t do
             if j ~= i then
                 table.insert(remaining, t[j])
             end
         end
 
-        -- Generar permutaciones de la lista restante
         for _, p in ipairs(aoc.list.permute(remaining)) do
-            -- Insertar el elemento actual al frente de cada permutación
             table.insert(permuted, { current, unpack(p) })
         end
     end
