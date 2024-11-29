@@ -156,6 +156,24 @@ function aoc.dict.getKeys(t)
     return keys
 end
 
+function aoc.dict.containsKey(tbl, element)
+    for k, _ in pairs(tbl) do
+        if k == element then
+            return true
+        end
+    end
+    return false
+end
+
+function aoc.dict.containsValue(tbl, element)
+    for _, v in pairs(tbl) do
+        if v == element then
+            return true
+        end
+    end
+    return false
+end
+
 function aoc.search.bfs(start, goal, neighbors)
     local queue = { start }
     local visited = {}
