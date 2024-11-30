@@ -37,6 +37,14 @@ function aoc.string.split(str, separator)
     return t
 end
 
+function aoc.string.splitToChar(str)
+    local characters = {}
+    for char in str:gmatch(".") do
+        table.insert(characters, char)
+    end
+    return characters
+end
+
 function aoc.string.replace(str, content, from, to)
     return str:sub(1, from - 1) .. content .. str:sub(to + 1)
 end
