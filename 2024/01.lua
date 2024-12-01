@@ -32,12 +32,10 @@ local function answer2()
         table.insert(list2, tonumber(line[2]))
     end
     for _, id in ipairs(list1) do
-        local j = 1
-        while j <= #list2 do
-            if id == list2[j] then
+        for _, id2 in ipairs(list2) do
+            if id == id2 then
                 totalSimilarityScore = totalSimilarityScore + id
             end
-            j = j + 1
         end
     end
     return totalSimilarityScore

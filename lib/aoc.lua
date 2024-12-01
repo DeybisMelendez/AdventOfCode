@@ -49,6 +49,14 @@ function aoc.string.replace(str, content, from, to)
     return str:sub(1, from - 1) .. content .. str:sub(to + 1)
 end
 
+function aoc.string.count(str, seq)
+    local count = 0
+    for _ in string.gmatch(str, seq) do
+        count = count + 1
+    end
+    return count
+end
+
 function aoc.string.iterate(str)
     local index = 1
     local len = #str
