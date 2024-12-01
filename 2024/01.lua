@@ -4,6 +4,7 @@ local input = aoc.input.getInput()
 input = aoc.string.split(input, "\n")
 local list1 = {}
 local list2 = {}
+local memo = {}
 
 for _, line in ipairs(input) do
     line = aoc.string.split(line, "%s")
@@ -13,10 +14,11 @@ end
 
 local function min(a, b) return a < b end
 
+table.sort(list1, min)
+table.sort(list2, min)
+
 local function answer1()
     local totalDistance = 0
-    table.sort(list1, min)
-    table.sort(list2, min)
     for i, id in ipairs(list1) do
         totalDistance = totalDistance + math.abs(id - list2[i])
     end
@@ -26,11 +28,21 @@ end
 local function answer2()
     local totalSimilarityScore = 0
     for _, id in ipairs(list1) do
+        if memo[id] then
+            totalSimilarityScore = totalSimilarityScore + memo[id]
+            break
+        end
+        local idCount = 0
         for _, id2 in ipairs(list2) do
             if id == id2 then
                 totalSimilarityScore = totalSimilarityScore + id
+                idCount = idCount + id
+            end
+            if id < id2 then
+                break
             end
         end
+        memo[id] = idCount
     end
     return totalSimilarityScore
 end
