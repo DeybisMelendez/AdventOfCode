@@ -8,113 +8,42 @@ end
 local XMAS = { "X", "M", "A", "S" }
 local height = #input
 local width = #input[1]
+local directions = {
+    { 1,  0 },  -- derecha
+    { 1,  1 },  -- diagonal derecha abajo
+    { 1,  -1 }, -- diagonal derecha arriba
+    { 0,  1 },  -- abajo
+    { 0,  -1 }, -- arriba
+    { -1, 0 },  -- izquierda
+    { -1, 1 },  -- diagonal izquierda abajo
+    { -1, -1 }, -- diagonal izquierda arriba
+}
+-- Función genérica para verificar un patrón
+local function matchesPattern(x, y, dx, dy)
+    for i, char in ipairs(XMAS) do
+        local nx, ny = x + (i - 1) * dx, y + (i - 1) * dy
+        if nx < 1 or ny < 1 or nx > width or ny > height or input[nx][ny] ~= char then
+            return false
+        end
+    end
+    return true
+end
 
 local function countXMAS(x, y)
-    local count = 8
-    if x + 3 <= width then
-        -- right
-        for i, char in ipairs(XMAS) do
-            if input[x + i - 1][y] ~= char then
-                count = count - 1
-                break
-            end
+    local count = 0
+    for _, dir in ipairs(directions) do
+        if matchesPattern(x, y, dir[1], dir[2]) then
+            count = count + 1
         end
-        if y + 3 <= height then
-            -- rightDown
-            for i, char in ipairs(XMAS) do
-                if input[x + i - 1][y + i - 1] ~= char then
-                    count = count - 1
-                    break
-                end
-            end
-        else
-            count = count - 1
-        end
-        if y - 3 >= 0 then
-            -- rightUp
-            for i, char in ipairs(XMAS) do
-                if input[x + i - 1][y - i + 1] ~= char then
-                    count = count - 1
-                    break
-                end
-            end
-        else
-            count = count - 1
-        end
-    else
-        count = count - 3
-    end
-    if y + 3 <= height then
-        -- down
-        for i, char in ipairs(XMAS) do
-            if input[x][y + i - 1] ~= char then
-                count = count - 1
-                break
-            end
-        end
-    else
-        count = count - 1
-    end
-    if y - 3 > 0 then
-        -- up
-        for i, char in ipairs(XMAS) do
-            if input[x][y - i + 1] ~= char then
-                count = count - 1
-                break
-            end
-        end
-    else
-        count = count - 1
-    end
-    if x - 3 > 0 then
-        -- left
-        for i, char in ipairs(XMAS) do
-            if input[x - i + 1][y] ~= char then
-                count = count - 1
-                break
-            end
-        end
-        if y + 3 <= height then
-            -- leftDown
-            for i, char in ipairs(XMAS) do
-                if input[x - i + 1][y + i - 1] ~= char then
-                    count = count - 1
-                    break
-                end
-            end
-        else
-            count = count - 1
-        end
-        if y - 3 >= 0 then
-            -- leftUp
-            for i, char in ipairs(XMAS) do
-                if input[x - i + 1][y - i + 1] ~= char then
-                    count = count - 1
-                    break
-                end
-            end
-        else
-            count = count - 1
-        end
-    else
-        count = count - 3
     end
     return count
 end
 
 local function isValidXMAS(x, y)
-    local count = 0
-    if input[x - 1][y - 1] == "M" and input[x + 1][y + 1] == "S" then
-        count = count + 1
-    elseif input[x - 1][y - 1] == "S" and input[x + 1][y + 1] == "M" then
-        count = count + 1
-    end
-    if input[x + 1][y - 1] == "M" and input[x - 1][y + 1] == "S" then
-        count = count + 1
-    elseif input[x + 1][y - 1] == "S" and input[x - 1][y + 1] == "M" then
-        count = count + 1
-    end
-    return count == 2
+    return (input[x - 1][y - 1] == "M" and input[x + 1][y + 1] == "S") or
+        (input[x - 1][y - 1] == "S" and input[x + 1][y + 1] == "M") or
+        (input[x + 1][y - 1] == "M" and input[x - 1][y + 1] == "S") or
+        (input[x + 1][y - 1] == "S" and input[x - 1][y + 1] == "M")
 end
 
 local function answer1()
