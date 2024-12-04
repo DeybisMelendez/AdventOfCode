@@ -40,10 +40,10 @@ local function countXMAS(x, y)
 end
 
 local function isValidXMAS(x, y)
-    return (input[x - 1][y - 1] == "M" and input[x + 1][y + 1] == "S") or
-        (input[x - 1][y - 1] == "S" and input[x + 1][y + 1] == "M") or
-        (input[x + 1][y - 1] == "M" and input[x - 1][y + 1] == "S") or
-        (input[x + 1][y - 1] == "S" and input[x - 1][y + 1] == "M")
+    return ((input[x - 1][y - 1] == "M" and input[x + 1][y + 1] == "S") or
+            (input[x - 1][y - 1] == "S" and input[x + 1][y + 1] == "M")) and
+        ((input[x + 1][y - 1] == "M" and input[x - 1][y + 1] == "S") or
+            (input[x + 1][y - 1] == "S" and input[x - 1][y + 1] == "M"))
 end
 
 local function answer1()
