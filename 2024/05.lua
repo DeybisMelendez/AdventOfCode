@@ -1,25 +1,26 @@
 local aoc = require "lib.aoc"
 
 local inputText = aoc.input.getInput()
-local input = {}
-input.pageOrder = inputText:match("(.*)\n\n")
-input.pageUpdate = inputText:match(".*\n\n(.*)")
-
-input.pageOrder = aoc.string.split(input.pageOrder, "\n")
-input.pageUpdate = aoc.string.split(input.pageUpdate, "\n")
+local input = {
+    pageOrder = aoc.string.split(inputText:match("(.*)\n\n"), "\n"),
+    pageUpdate = aoc.string.split(inputText:match(".*\n\n(.*)"), "\n"),
+}
 
 local orderMemo = {}
 
 for _, page in ipairs(input.pageOrder) do
-    page = aoc.string.split(page, "|")
-    if not orderMemo[page[1]] then
-        orderMemo[page[1]] = { next = {}, before = {} }
+    local parts = aoc.string.split(page, "|")
+    local first, second = parts[1], parts[2]
+
+    if not orderMemo[first] then
+        orderMemo[first] = { next = {}, before = {} }
     end
-    if not orderMemo[page[2]] then
-        orderMemo[page[2]] = { next = {}, before = {} }
+    if not orderMemo[second] then
+        orderMemo[second] = { next = {}, before = {} }
     end
-    orderMemo[page[1]].next[page[2]] = true
-    orderMemo[page[2]].before[page[1]] = true
+
+    orderMemo[first].next[second] = true
+    orderMemo[second].before[first] = true
 end
 
 local function getMiddle(update)
@@ -27,42 +28,38 @@ local function getMiddle(update)
 end
 
 local function isUpdateCorrect(update)
-    local updateCorrect = true
-    for i, num in ipairs(update) do
+    for i = 1, #update do
+        local num = update[i]
+        local nextMemo, beforeMemo = orderMemo[num].next, orderMemo[num].before
+
         for j = i + 1, #update do
-            if not orderMemo[num].next[update[j]] then
-                updateCorrect = false
-                break
-            end
+            if not nextMemo[update[j]] then return false end
         end
         for j = i - 1, 1, -1 do
-            if not orderMemo[num].before[update[j]] then
-                updateCorrect = false
-                break
-            end
-        end
-        if not updateCorrect then
-            break
+            if not beforeMemo[update[j]] then return false end
         end
     end
-    return updateCorrect
+    return true
+end
+
+local function swap(update, i, j)
+    update[i], update[j] = update[j], update[i]
 end
 
 local function orderUpdate(update)
-    for i, num in ipairs(update) do
+    for i = 1, #update do
+        local num = update[i]
+        local nextMemo, beforeMemo = orderMemo[num].next, orderMemo[num].before
+
         for j = i + 1, #update do
-            if not orderMemo[num].next[update[j]] then
-                local copy = update[i]
-                update[i] = update[j]
-                update[j] = copy
+            if not nextMemo[update[j]] then
+                swap(update, i, j)
                 return orderUpdate(update)
             end
         end
         for j = i - 1, 1, -1 do
-            if not orderMemo[num].before[update[j]] then
-                local copy = update[i]
-                update[i] = update[j]
-                update[j] = copy
+            if not beforeMemo[update[j]] then
+                swap(update, i, j)
                 return orderUpdate(update)
             end
         end
@@ -73,7 +70,6 @@ local function answer1()
     local total = 0
     for _, update in ipairs(input.pageUpdate) do
         update = aoc.string.split(update, ",")
-
         if isUpdateCorrect(update) then
             total = total + getMiddle(update)
         end
@@ -85,7 +81,6 @@ local function answer2()
     local total = 0
     for _, update in ipairs(input.pageUpdate) do
         update = aoc.string.split(update, ",")
-
         if not isUpdateCorrect(update) then
             orderUpdate(update)
             total = total + getMiddle(update)
