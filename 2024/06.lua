@@ -3,7 +3,9 @@ local aoc = require "lib.aoc"
 local memoPos = {}
 local input = aoc.input.getInput()
 local guard = {}
+local UP, RIGHT, DOWN, LEFT = 1, 2, 3, 4
 input = aoc.string.split(input, "\n")
+
 for y, line in ipairs(input) do
     input[y] = aoc.string.splitToChar(line)
     if not guard.x then
@@ -12,7 +14,7 @@ for y, line in ipairs(input) do
                 guard = {
                     x = x,
                     y = y,
-                    dir = "UP"
+                    dir = UP
                 }
                 input[y][x] = "."
                 break
@@ -20,15 +22,16 @@ for y, line in ipairs(input) do
         end
     end
 end
+
 local guardX, guardY, guardDir = guard.x, guard.y, guard.dir
 local width = #input
 local height = #input[1]
 
 function guard:nextPos()
-    if self.dir == "UP" then
+    if self.dir == UP then
         if self.y > 1 then
             if input[self.y - 1][self.x] == "#" then
-                self.dir = "RIGHT"
+                self.dir = RIGHT
                 return true
             end
             self.y = self.y - 1
@@ -36,10 +39,10 @@ function guard:nextPos()
         end
         return false
     end
-    if self.dir == "RIGHT" then
+    if self.dir == RIGHT then
         if self.x < width then
             if input[self.y][self.x + 1] == "#" then
-                self.dir = "DOWN"
+                self.dir = DOWN
                 return true
             end
             self.x = self.x + 1
@@ -47,10 +50,10 @@ function guard:nextPos()
         end
         return false
     end
-    if self.dir == "DOWN" then
+    if self.dir == DOWN then
         if self.y < height then
             if input[self.y + 1][self.x] == "#" then
-                self.dir = "LEFT"
+                self.dir = LEFT
                 return true
             end
             self.y = self.y + 1
@@ -58,10 +61,10 @@ function guard:nextPos()
         end
         return false
     end
-    if self.dir == "LEFT" then
+    if self.dir == LEFT then
         if self.x > 1 then
             if input[self.y][self.x - 1] == "#" then
-                self.dir = "UP"
+                self.dir = UP
                 return true
             end
             self.x = self.x - 1
@@ -75,15 +78,17 @@ local function answer1()
     memoPos = {}
     guard.x, guard.y, guard.dir = guardX, guardY, guardDir
     local total = 1
-    memoPos[guard.x .. "-" .. guard.y] = true
+    memoPos[guard.x + guard.y * 1000] = true
     while guard:nextPos() do
-        if not memoPos[guard.x .. "-" .. guard.y] then
+        local memoKey = guard.x + guard.y * 1000
+        if not memoPos[memoKey] then
             total = total + 1
-            memoPos[guard.x .. "-" .. guard.y] = true
+            memoPos[memoKey] = true
         end
     end
     return total
 end
+
 local function answer2()
     local total = 0
     for y = 1, #input do
@@ -93,10 +98,11 @@ local function answer2()
                 input[y][x] = "#"
                 guard.x, guard.y, guard.dir = guardX, guardY, guardDir
                 memoPos = {}
-                memoPos[guard.x .. "-" .. guard.y .. guard.dir] = true
+                memoPos[guard.x + guard.y * 1000 + guard.dir * 1000000] = true
                 while guard:nextPos() do
-                    if not memoPos[guard.x .. "-" .. guard.y .. "-" .. guard.dir] then
-                        memoPos[guard.x .. "-" .. guard.y .. "-" .. guard.dir] = true
+                    local memoKey = guard.x + guard.y * 1000 + guard.dir * 1000000
+                    if not memoPos[memoKey] then
+                        memoPos[memoKey] = true
                     else
                         total = total + 1
                         input[y][x] = backup
