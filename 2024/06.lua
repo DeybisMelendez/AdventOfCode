@@ -3,6 +3,7 @@ local aoc = require "lib.aoc"
 local memoPos = {}
 local input = aoc.input.getInput()
 local guard = {}
+local positions = {}
 local UP, RIGHT, DOWN, LEFT = 1, 2, 3, 4
 input = aoc.string.split(input, "\n")
 
@@ -84,6 +85,7 @@ local function answer1()
         if not memoPos[memoKey] then
             total = total + 1
             memoPos[memoKey] = true
+            table.insert(positions, { x = guard.x, y = guard.y })
         end
     end
     return total
@@ -91,26 +93,24 @@ end
 
 local function answer2()
     local total = 0
-    for y = 1, #input do
-        for x = 1, #input[1] do
-            if input[y][x] ~= "#" then
-                local backup = input[y][x]
-                input[y][x] = "#"
-                guard.x, guard.y, guard.dir = guardX, guardY, guardDir
-                memoPos = {}
-                memoPos[guard.x + guard.y * 1000 + guard.dir * 1000000] = true
-                while guard:nextPos() do
-                    local memoKey = guard.x + guard.y * 1000 + guard.dir * 1000000
-                    if not memoPos[memoKey] then
-                        memoPos[memoKey] = true
-                    else
-                        total = total + 1
-                        input[y][x] = backup
-                        break
-                    end
+    for _, pos in ipairs(positions) do
+        if input[pos.y][pos.x] ~= "#" then
+            local backup = input[pos.y][pos.x]
+            input[pos.y][pos.x] = "#"
+            guard.x, guard.y, guard.dir = guardX, guardY, guardDir
+            memoPos = {}
+            memoPos[guard.x + guard.y * 1000 + guard.dir * 1000000] = true
+            while guard:nextPos() do
+                local memoKey = guard.x + guard.y * 1000 + guard.dir * 1000000
+                if not memoPos[memoKey] then
+                    memoPos[memoKey] = true
+                else
+                    total = total + 1
+                    input[pos.y][pos.x] = backup
+                    break
                 end
-                input[y][x] = backup
             end
+            input[pos.y][pos.x] = backup
         end
     end
     return total
