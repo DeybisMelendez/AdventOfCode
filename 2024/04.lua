@@ -18,7 +18,6 @@ local directions = {
     { -1, 1 },  -- diagonal izquierda abajo
     { -1, -1 }, -- diagonal izquierda arriba
 }
--- Función genérica para verificar un patrón
 local function matchesPattern(x, y, dx, dy)
     for i, char in ipairs(XMAS) do
         local nx, ny = x + (i - 1) * dx, y + (i - 1) * dy

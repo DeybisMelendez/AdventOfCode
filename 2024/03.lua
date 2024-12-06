@@ -6,8 +6,10 @@ local dontDoPattern = "don't%(%)(.-)do%(%)"
 
 local function getTotalMul(str)
     local total = 0
+    local num = 0
     for n1, n2 in string.gmatch(str, mulPattern) do
         total = total + n1 * n2
+        num = num + 1
     end
     return total
 end
