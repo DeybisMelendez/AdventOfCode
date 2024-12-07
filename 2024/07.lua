@@ -11,14 +11,18 @@ for i = 1, #input do
 end
 
 local function isEquationCorrect(equation, total, i, op)
+    if total > equation[1] then
+        return false
+    end
     if i == #equation + 1 then
         if total == equation[1] then
             return true
         end
         return false
     end
-    if op.add then
-        if isEquationCorrect(equation, total + equation[i], i + 1, op) then
+    if op.concat then
+        local numDigits = math.floor(math.log10(equation[i]) + 1)
+        if isEquationCorrect(equation, total * math.pow(10, numDigits) + equation[i], i + 1, op) then
             return true
         end
     end
@@ -27,8 +31,8 @@ local function isEquationCorrect(equation, total, i, op)
             return true
         end
     end
-    if op.concat then
-        if isEquationCorrect(equation, tonumber(total .. equation[i]), i + 1, op) then
+    if op.add then
+        if isEquationCorrect(equation, total + equation[i], i + 1, op) then
             return true
         end
     end
