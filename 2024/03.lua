@@ -20,6 +20,7 @@ end
 
 local function answer2()
     local cleanedInput = string.gsub(input, dontDoPattern, "")
+    cleanedInput = string.match(cleanedInput, "(.-)don't%(%)")
     return getTotalMul(cleanedInput)
 end
 
