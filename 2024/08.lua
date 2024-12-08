@@ -45,14 +45,18 @@ local function answer1()
 end
 
 local function addAntinodes(antinodes, x1, y1, x2, y2)
-    if isValidPosition(x1, y1) then
-        local key1 = x1 .. "-" .. y1
+    local dx, dy = x2 - x1, y2 - y1
+    local x, y = x1 - dx, y1 - dy
+    if isValidPosition(x, y) then
+        local key1 = x .. "-" .. y
         antinodes[key1] = true
+        addAntinodes(antinodes, x2, y2, x, y)
     end
-
+    x, y = x2 + dx, y2 + dy
     if isValidPosition(x2, y2) then
         local key2 = x2 .. "-" .. y2
         antinodes[key2] = true
+        addAntinodes(antinodes, x2, y2, x, y)
     end
 end
 
