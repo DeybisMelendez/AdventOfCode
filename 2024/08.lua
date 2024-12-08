@@ -7,57 +7,47 @@ for i, line in ipairs(input) do
     input[i] = aoc.string.splitToChar(line)
 end
 
+local function isValidPosition(x, y)
+    return x > 0 and y > 0 and x <= #input and y <= #input[x]
+end
+
 local function answer1()
-    local antinodes = 0
+    local antinodes = {}
     for i = 1, #input do
         for j = 1, #input[i] do
             local char = input[i][j]
             if char ~= "." then
-                local memoKey = i .. "-" .. j
-                AntennaMemo[memoKey] = true
                 for i2 = 1, #input do
-                    for j2 = 1, #input[i] do
+                    for j2 = 1, #input[i2] do
                         local char2 = input[i2][j2]
-                        if char == char2 and not AntennaMemo[i2 .. "-" .. j2] then
-                            local distI = (i2 - i) * 2
-                            local distJ = (j2 - j) * 2
-                            --local distI2 = i2 - i
-                            --local distJ2 = j2 - j
-                            if i2 - distI > 0 and j2 - distJ > 0 and i2 - distI <= #input and j2 - distJ <= #input[i] then
-                                if input[i2 - distI][j2 - distJ] == "." then
-                                    antinodes = antinodes + 1
-                                end
+                        if char == char2 and (i ~= i2 or j ~= j2) then
+                            -- Distancia entre antenas
+                            local di, dj = i2 - i, j2 - j
+
+                            -- Calcular antinodo 1
+                            local x1, y1 = i - di, j - dj
+                            if isValidPosition(x1, y1) then
+                                local key1 = x1 .. "-" .. y1
+                                antinodes[key1] = true
                             end
-                            if i + distI > 0 and j + distJ > 0 and i + distI <= #input and j + distJ <= #input[i] then
-                                if input[i + distI][j + distJ] == "." then
-                                    antinodes = antinodes + 1
-                                end
+
+                            -- Calcular antinodo 2
+                            local x2, y2 = i2 + di, j2 + dj
+                            if isValidPosition(x2, y2) then
+                                local key2 = x2 .. "-" .. y2
+                                antinodes[key2] = true
                             end
-                            --[[if i - distI2 > 0 and j - distJ2 > 0 and i - distI2 <= #input and j - distJ2 <= #input[i] then
-                                if input[i - distI2][j - distJ2] == "." then
-                                    print(1, char, i, j, i2, j2, i - distI2, j - distJ2)
-                                    antinodes = antinodes + 1
-                                end
-                            end
-                            if i2 + distI2 > 0 and j2 + distJ2 > 0 and i2 + distI2 <= #input and j2 + distJ2 <= #input[i2] then
-                                if input[i2 + distI2][j2 + distJ2] == "." then
-                                    print(2, char, i, j, i2, j2, i2 + distI2, j2 + distJ2)
-                                    antinodes = antinodes + 1
-                                end
-                            end]]
                         end
                     end
                 end
             end
         end
     end
-    return antinodes
+    return #aoc.dict.getKeys(antinodes)
 end
 
 print("answer 1 is " .. answer1())
-for k, _ in pairs(antinodeMemo) do
-    print(k)
-end
+
 -- 371 muy alto
 -- 324 no es
 -- 321 muy baja
