@@ -36,10 +36,9 @@ local function answer2()
     for _, line in ipairs(input) do
         local dir = line:sub(1, 1)
         local steps = tonumber(line:sub(2, #line))
-        local count = 0
         local initialDial = dial
         if steps > 100 then
-            count = math.floor(steps / 100)
+            solution = solution + math.floor(steps / 100)
             steps = steps % 100
         end
         if dir == "R" then
@@ -48,19 +47,17 @@ local function answer2()
             dial = dial - steps
         end
         if dial == 0 then
-            count = count + 1
+            solution = solution + 1
         end
         if dial < 0 then
             dial = dial + 100
             if initialDial > 0 then
-                count = count + 1
+                solution = solution + 1
             end
         elseif dial > 99 then
             dial = dial - 100
-            count = count + 1
+            solution = solution + 1
         end
-
-        solution = solution + count
     end
     return solution
 end
