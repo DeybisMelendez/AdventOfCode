@@ -1,10 +1,31 @@
 local aoc = require "lib.aoc"
 local input = aoc.input.getInput()
+for char=1, #input do
+    if input:sub(char, char) == "." then
+        input = input:sub(1, char-1) .. " " .. input:sub(char+1)
+    end
+end
+
 input = aoc.string.split(input, "\n")
 local lineHeight = #input
 local lineWidth = #input[1]
-
+local asciiBrightness = "@%#*+=-:. "
 local removables = {}
+
+local function printGrid()
+    for y = 1, lineHeight do
+        print(input[y])
+    end
+end
+
+local function getNextAsciiIndex(char)
+    for i = 1, #asciiBrightness do
+        if asciiBrightness:sub(i, i) == char then
+            return i < #asciiBrightness and i + 1 or i
+        end
+    end
+    return #asciiBrightness
+end
 
 local function countAdjacents(x, y)
     local deltas = {
@@ -33,29 +54,18 @@ local function removeMarked()
     for _, pos in ipairs(removables) do
         local x, y = pos.x, pos.y
         local line = input[y]
-        input[y] = line:sub(1, x-1) .. "." .. line:sub(x+1)
+        local char = input[y]:sub(x, x)
+        local nexCharIndex = getNextAsciiIndex(char)
+        local nexChar = asciiBrightness:sub(nexCharIndex, nexCharIndex)
+        input[y] = line:sub(1, x-1) .. nexChar.. line:sub(x+1)
     end
-    removables = {}
+    --removables = {}
 end
 
-
-local function answer1()
-    local total = 0
-    for y = 1, lineHeight do
-        for x = 1, lineWidth do
-            local char = input[y]:sub(x, x)
-            if char == "@" then
-                if countAdjacents(x, y) then
-                    total = total + 1
-                end
-            end
-        end
-    end
-    return total
-end
-
-local function answer2()
-    local total = 0
+local function visualization()
+    os.execute("clear")
+    printGrid()
+    os.execute("sleep 1")
     while true do
         local anyRemoved = false
         for y = 1, lineHeight do
@@ -64,7 +74,6 @@ local function answer2()
                 if char == "@" then
                     if countAdjacents(x, y) then
                         anyRemoved = true
-                        total = total + 1
                     end
                 end
             end
@@ -73,9 +82,11 @@ local function answer2()
             break
         end
         removeMarked()
+        os.execute("clear")
+        printGrid()
+        os.execute("sleep 0.2")
     end
-    return total
 end
 
-print("The answer 1 is: " .. answer1())
-print("The answer 2 is: " .. answer2())
+--visualization()
+print(lineHeight, lineWidth)
