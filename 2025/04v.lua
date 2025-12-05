@@ -84,9 +84,8 @@ local function visualization()
         removeMarked()
         os.execute("clear")
         printGrid()
-        os.execute("sleep 0.2")
+        --os.execute("sleep 0.05")
     end
 end
 
---visualization()
-print(lineHeight, lineWidth)
+visualization()

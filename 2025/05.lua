@@ -18,17 +18,11 @@ local function answer1()
                 break
             end
         end
-        if not inRange then
+        if inRange then
             total = total + 1
         end
     end
     return total
 end
 
-for i, range in ipairs(input.ids) do
-    print(input.ids[i], string.format("%18.0f",range))
-end
-
 print("answer 1 is " .. answer1())
-
--- 227 muy bajp
