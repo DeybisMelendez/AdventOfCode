@@ -9,64 +9,6 @@ local function getInput()
     return input
 end
 
-local function printMap(input)
-    -- os.execute("clear")
-    for y = 1, #input do
-        local line = ""
-        for x = 1, #input[y] do
-            line = line .. input[y][x]
-        end
-        print(line)
-    end
-    print("------------")
-    os.execute("sleep 0.01")
-end
-
-local function nextChar(y, x, input)
-    local char = input[y][x]
-
-    while true do
-        if x == #input[y] then
-            x = 1
-            y = y + 1
-        end
-        if y == #input then
-            return 1
-        end
-        char = input[y][x]
-        if char ~= "." and char ~= "^" then
-            break
-        end
-        x = x + 1
-
-    end
-    local result = 0
-    if char == "S" and input[y + 1][x] == "." then
-        input[y + 1][x] = "|"
-        -- printMap(input)
-        result = nextChar(y, x + 1, input)
-        input[y + 1][x] = "."
-    elseif char == "|" then
-        if input[y + 1][x] == "^" then
-            input[y + 1][x - 1] = "|"
-            -- printMap(input)
-            result = nextChar(y, x + 1, input)
-            input[y + 1][x - 1] = "."
-            input[y + 1][x + 1] = "|"
-            -- printMap(input)
-            result = result + nextChar(y, x + 1, input)
-            input[y + 1][x + 1] = "."
-        elseif input[y + 1][x] == "." then
-            input[y + 1][x] = "|"
-            -- printMap(input)
-            result = nextChar(y, x + 1, input)
-            input[y + 1][x] = "."
-        end
-    end
-
-    return result
-end
-
 local function answer1()
     local input = getInput()
     local total = 0
@@ -89,10 +31,48 @@ local function answer1()
     return total
 end
 
-local function answer2bak()
+local function answer2()
     local input = getInput()
-    return nextChar(1, 2, input)
+    local H = #input
+    local W = #input[1]
+
+    local ways = {}
+    for y = 1, H do
+        ways[y] = {}
+        for x = 1, W do
+            ways[y][x] = 0
+        end
+    end
+
+    local total = 0
+
+    for y = 1, H do
+        for x = 1, W do
+            local char = input[y][x]
+            if char == "S" then
+                ways[y][x] = 1
+            elseif char == "." and y > 1 then
+                ways[y][x] = ways[y][x] + ways[y - 1][x]
+            elseif char == "^" then
+                if x > 1 then
+                    ways[y][x - 1] = ways[y][x - 1] + ways[y - 1][x]
+                else
+                    total = total + ways[y][x]
+                end
+                if x < W then
+                    ways[y][x + 1] = ways[y][x + 1] + ways[y - 1][x]
+                else
+                    total = total + ways[y][x]
+                end
+            end
+            if y == H then
+                total = total + ways[y][x]
+            end
+        end
+    end
+
+    return total
 end
 
 print("answer 1 is " .. answer1())
-print("answer 2 is " .. answer2())
+print(string.format("Answer 2: %18.0f", answer2()))
