@@ -84,7 +84,7 @@ local function answer2()
                 x = a.x,
                 y = b.y
             }
-            if pip(a.x, b.x) and pip(b.x, b.y) and pip(c.x, c.y) and pip(d.x, d.y) then
+            if pip(a.x, b.y) and pip(b.x, b.y) and pip(c.x, c.y) and pip(d.x, d.y) then
                 local width = math.abs(a.x - b.x) + 1
                 local height = math.abs(a.y - b.y) + 1
                 local size = width * height
