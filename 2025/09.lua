@@ -70,6 +70,7 @@ end
 
 local function answer2()
     local biggest = 0
+    local memo = {}
     for i = 1, #input do
         local a = input[i]
         for j = i + 1, #input do
@@ -88,10 +89,34 @@ local function answer2()
 
                 -- Mi truco para optimizar es reduciendo la cantidad de puntos
                 -- a evaluar, a mi me funcionó evaluando cada 1500 puntos en cada recta.
+                -- Nota: Con memoización se reduce el tiempo a cambio de ocupar mas memoria.
 
-                -- recorrer borde superior e inferior
-                for x = minx, maxx, 1500 do
-                    if not pip(x, miny) or not pip(x, maxy) then
+                -- recorrer borde lateral
+                for x = minx, maxx do
+                    local leftKey = x * 1000000 + miny
+                    if memo[leftKey] == nil then
+                        if pip(x, miny) then
+                            memo[leftKey] = true
+                        else
+                            valid = false
+                            memo[leftKey] = false
+                            break
+                        end
+                    elseif not memo[leftKey] then
+                        valid = false
+                        break
+                    end
+
+                    local rightKey = x * 1000000 + maxy
+                    if memo[rightKey] == nil then
+                        if pip(x, maxy) then
+                            memo[rightKey] = true
+                        else
+                            memo[rightKey] = false
+                            valid = false
+                            break
+                        end
+                    elseif not memo[rightKey] then
                         valid = false
                         break
                     end
@@ -99,11 +124,34 @@ local function answer2()
 
                 -- si sigue válido, recorrer laterales
                 if valid then
-                    for y = miny, maxy, 1500 do
-                        if not pip(minx, y) or not pip(maxx, y) then
+                    for y = miny, maxy do
+                        local upKey = minx * 1000000 + y
+                        if memo[upKey] == nil then
+                            if pip(minx, y) then
+                                memo[upKey] = true
+                            else
+                                valid = false
+                                memo[upKey] = false
+                                break
+                            end
+                        elseif not memo[upKey] then
                             valid = false
                             break
                         end
+                        local downKey = maxx * 1000000 + y
+                        if memo[downKey] == nil then
+                            if pip(maxx, y) then
+                                memo[downKey] = true
+                            else
+                                valid = false
+                                memo[downKey] = false
+                                break
+                            end
+                        elseif not memo[downKey] then
+                            valid = false
+                            break
+                        end
+
                     end
                 end
 
@@ -117,4 +165,5 @@ local function answer2()
 end
 
 print("answer 1 is " .. answer1())
+print("Nota: La solución general de la parte 2 tarda aproximadamente 5 a 6 minutos")
 print("answer 2 is " .. answer2())
