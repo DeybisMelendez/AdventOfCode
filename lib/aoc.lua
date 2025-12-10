@@ -1,13 +1,12 @@
 -- Librería escrita por Deybis Melendez que contiene utilerías
 -- para realizar los puzzles de advent of code
-
 local aoc = {
     input = {},
     debug = {},
     string = {},
     list = {},
     dict = {},
-    search = {},
+    search = {}
 }
 
 function aoc.debug.timeExecution(func, ...)
@@ -73,7 +72,9 @@ end
 
 function aoc.list.indexOf(t, val)
     for k, v in pairs(t) do
-        if v == val then return k end
+        if v == val then
+            return k
+        end
     end
 end
 
@@ -141,7 +142,7 @@ end
 
 function aoc.list.permute(t)
     if #t == 0 then
-        return { {} }
+        return {{}}
     end
 
     local permuted = {}
@@ -157,7 +158,7 @@ function aoc.list.permute(t)
         end
 
         for _, p in ipairs(aoc.list.permute(remaining)) do
-            table.insert(permuted, { current, unpack(p) })
+            table.insert(permuted, {current, unpack(p)})
         end
     end
 
@@ -191,7 +192,7 @@ function aoc.dict.containsValue(tbl, element)
 end
 
 function aoc.search.bfs(start, goal, neighbors)
-    local queue = { start }
+    local queue = {start}
     local visited = {}
     local prev = {}
 
@@ -246,7 +247,7 @@ function aoc.search.dijkstra(start, goal, neighbors, weight)
             local path = {}
             local node = currentNode
             while node do
-                table.insert(path, 1, { node.x, node.y })
+                table.insert(path, 1, {node.x, node.y})
                 node = node.parent
             end
             return path
@@ -311,7 +312,7 @@ function aoc.search.aStar(start, goal, heuristic, neighbors, weight)
             local path = {}
             local node = currentNode
             while node do
-                table.insert(path, 1, { node.x, node.y })
+                table.insert(path, 1, {node.x, node.y})
                 node = node.parent
             end
             return path
