@@ -32,6 +32,7 @@ local function searchToggle(machine, lightIndex)
             end
         end
     end
+    return -1
 end
 
 local function applyToggle(lights, toggle)
@@ -61,11 +62,15 @@ local function isOff(machine)
 end
 
 local function nextToggle(machine, memo)
-    local min = 1000000
+    local min = 1000000000
     for i = 1, #machine.lights do
         local light = machine.lights[i]
         if light == '#' then
-            local toggle = machine.toggles[searchToggle(machine, i)]
+            local next = searchToggle(machine, i)
+            if next == -1 then
+                return 1000000
+            end
+            local toggle = machine.toggles[next]
             applyToggle(machine.lights, toggle)
             if isOff(machine) then
                 applyToggle(machine.lights, toggle)
